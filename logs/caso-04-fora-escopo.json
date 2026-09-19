@@ -1,0 +1,11 @@
+{
+    "caso": "04",
+    "tipo": "fora_do_escopo",
+    "entrada_usuario": "Qual é a previsão do tempo para amanhã?",
+    "ferramenta_utilizada": null,
+    "argumentos": null,
+    "resultado_ferramenta": null,
+    "resposta_agente": "Não consigo fornecer informações sobre previsão do tempo, pois meu foco é apenas em veículos. Se você tiver dúvidas sobre algum carro, estou à disposição para ajudar.",
+    "resultado": "sucesso",
+    "tool_acionada": false
+  }

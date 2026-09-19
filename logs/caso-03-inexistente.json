@@ -1,0 +1,18 @@
+{
+    "caso": "03",
+    "tipo": "registro_inexistente",
+    "entrada_usuario": "Qual câmbio o Golf R 2020 possui?",
+    "ferramenta_utilizada": "buscar_veiculo",
+    "argumentos": {
+      "marca": "Volkswagen",
+      "modelo": "Golf R",
+      "ano": 2020,
+      "versao": null
+    },
+    "resultado_ferramenta": {
+      "encontrado": false,
+      "mensagem": "Nenhum veículo correspondente foi encontrado na base."
+    },
+    "resposta_agente": "O veículo Volkswagen Golf R do ano 2020 não está cadastrado na base de dados do LuxCar. Gostaria que eu verificasse outra informação ou modelo?",
+    "resultado": "sucesso"
+  }

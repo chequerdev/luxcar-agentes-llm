@@ -1,0 +1,17 @@
+{
+    "caso": "01",
+    "tipo": "simples",
+    "entrada_usuario": "Qual câmbio o Polo TSI 2018 possui?",
+    "ferramenta_utilizada": "buscar_veiculo",
+    "argumentos": {
+      "marca": "Volkswagen",
+      "modelo": "Polo",
+      "ano": 2018,
+      "versao": "TSI"
+    },
+    "resultado_ferramenta": {
+      "encontrado": true
+    },
+    "resposta_agente": "O Volkswagen Polo TSI 2018 possui câmbio automático de 6 velocidades.",
+    "resultado": "sucesso"
+  }

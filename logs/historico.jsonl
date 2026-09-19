@@ -1,0 +1,4 @@
+{"pergunta": "Teste LuxCar", "resposta": "Registro funcionando!", "ferramenta_utilizada": null}
+{"pergunta": "Qual câmbio o Polo TSI 2018 possui?", "resposta": "O **Volkswagen Polo TSI 2018** possui **câmbio automático de 6 velocidades**.", "ferramenta_utilizada": "buscar_veiculo"}
+{"pergunta": "Qual câmbio o Polo TSI 2018 possui?", "resposta": "O **Volkswagen Polo TSI 2018** possui **câmbio automático de 6 velocidades**.", "ferramenta_utilizada": "buscar_veiculo"}
+{"pergunta": "Qual versão do Polo 2018 existe?", "resposta": "Para o Volkswagen Polo do ano de 2018, existe a versão **TSI**.", "ferramenta_utilizada": "listar_versoes"}

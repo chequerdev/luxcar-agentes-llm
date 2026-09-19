@@ -1,0 +1,62 @@
+[
+    {
+      "id": 1,
+      "marca": "Volkswagen",
+      "modelo": "Polo",
+      "versao": "TSI",
+      "ano": 2018,
+      "motor": "1.0 TSI",
+      "potencia_cv": 128,
+      "torque_kgfm": 20.4,
+      "combustivel": "Flex",
+      "cambio": "Automático de 6 velocidades"
+    },
+    {
+      "id": 2,
+      "marca": "Volkswagen",
+      "modelo": "Golf",
+      "versao": "GTI",
+      "ano": 2015,
+      "motor": "2.0 TSI",
+      "potencia_cv": 220,
+      "torque_kgfm": 35.7,
+      "combustivel": "Gasolina",
+      "cambio": "Automático DSG de 6 velocidades"
+    },
+    {
+      "id": 3,
+      "marca": "Volkswagen",
+      "modelo": "Jetta",
+      "versao": "Highline",
+      "ano": 2017,
+      "motor": "2.0 TSI",
+      "potencia_cv": 211,
+      "torque_kgfm": 28.6,
+      "combustivel": "Gasolina",
+      "cambio": "Automático DSG de 6 velocidades"
+    },
+    {
+      "id": 4,
+      "marca": "Audi",
+      "modelo": "A3",
+      "versao": "Ambition",
+      "ano": 2016,
+      "motor": "2.0 TFSI",
+      "potencia_cv": 220,
+      "torque_kgfm": 35.7,
+      "combustivel": "Gasolina",
+      "cambio": "Automático S tronic de 6 velocidades"
+    },
+    {
+      "id": 5,
+      "marca": "Honda",
+      "modelo": "Civic",
+      "versao": "Touring",
+      "ano": 2020,
+      "motor": "1.5 Turbo",
+      "potencia_cv": 173,
+      "torque_kgfm": 22.4,
+      "combustivel": "Gasolina",
+      "cambio": "CVT"
+    }
+  ]
