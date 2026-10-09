@@ -1,0 +1,15 @@
+{
+  "data_utc": "2026-10-09T23:28:33.527049+00:00",
+  "modelo": "openai/gpt-oss-20b",
+  "provider": "Groq (OpenAI-compatible)",
+  "modo": "full",
+  "versoes": "A=prompt original; B=prompt original + regras 10",
+  "dataset_versao": "1.0.0",
+  "dataset_sha256": "731df82bdc1b933111e046837dd31692d2705c8599495a8c2336d33d9465694a",
+  "base_sha256": "c486e1b098e055b2eaba2ef188d65d49ff0b989b7b244d883dae147b746f4556",
+  "repeticoes_por_versao": 2,
+  "temperatura": "não fixada; default do provedor",
+  "max_passos": 5,
+  "rubrica": "regras locais v1; juiz LLM pendente",
+  "delay_s": 3.0
+}

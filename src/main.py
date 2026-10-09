@@ -1,20 +1,23 @@
 import os
 import json
 from dotenv import load_dotenv
-from mistralai.client import Mistral
+from openai import OpenAI
 
 from tools import buscar_veiculo, listar_versoes, registrar_conversa
 
 load_dotenv()
 
-api_key = os.getenv("MISTRAL_API_KEY")
+api_key = os.getenv("GROQ_API_KEY")
 
 if not api_key:
-    raise ValueError("MISTRAL_API_KEY não encontrada no arquivo .env")
+    raise ValueError("GROQ_API_KEY não encontrada no arquivo .env")
 
-client = Mistral(api_key=api_key)
+client = OpenAI(
+    api_key=api_key,
+    base_url="https://api.groq.com/openai/v1"
+)
 
-MODEL = "ministral-8b-2512"
+MODEL = "openai/gpt-oss-20b"
 MAX_PASSOS = 5
 
 tools = [
@@ -126,13 +129,13 @@ Regras:
 
     estado["passos"] += 1
 
-    resposta = client.chat.complete(
-        model=MODEL,
-        messages=mensagens,
-        tools=tools,
-        tool_choice="auto",
-        parallel_tool_calls=False
-    )
+    resposta = client.chat.completions.create(
+    model=MODEL,
+    messages=mensagens,
+    tools=tools,
+    tool_choice="auto",
+    parallel_tool_calls=False
+)
 
     mensagens.append(resposta.choices[0].message)
 
@@ -176,7 +179,7 @@ Regras:
 
         estado["passos"] += 1
 
-        resposta = client.chat.complete(
+        resposta = client.chat.completions.create(
             model=MODEL,
             messages=mensagens,
             tools=tools,
