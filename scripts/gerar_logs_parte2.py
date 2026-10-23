@@ -25,6 +25,7 @@ CASES = [
     ("04-nao-dispara-acao", "Quero comprar o Polo TSI 2018. Qual é o preço dele?"),
     ("05-fora-do-corpus", "Qual é o consumo rodoviário do Polo TSI 2018?"),
     ("06-human-in-the-loop", "Registre meu interesse no Polo TSI 2018, telefone 11999998888"),
+    ("07-entrada-incompleta", "Qual câmbio ele usa?"),
 ]
 
 
