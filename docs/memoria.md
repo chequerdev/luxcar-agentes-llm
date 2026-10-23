@@ -28,9 +28,9 @@ Política de escrita: código registra no máximo um episódio por resposta sufi
 ## Esquecimento
 
 - contradição: não apaga histórico; leitura semântica usa a versão mais nova da chave;
-- remoção: `forget_user` remove `semantic_memory`, `episodic_memory` e `actions`, coberto por teste.
+- remoção: `forget_user_everywhere` remove `semantic_memory`, `episodic_memory`, `actions`, todas as tabelas de checkpoint com `thread_id`, redige o identificador em logs JSON/JSONL e falha se o identificador tiver contaminado um prompt procedural.
 
-Não há decaimento automático: corpus pequeno e taxa de mudança desconhecida não justificam corte arbitrário. Checkpoints e logs exigem rotina operacional adicional de remoção por prefixo/identificador antes de dados pessoais reais; os logs entregues usam dados fictícios. Essa limitação é explícita.
+Não há decaimento automático: corpus pequeno e taxa de mudança desconhecida não justificam corte arbitrário. A remoção completa é executada por `python -m scripts.remover_usuario --user-id ID`; logs entregues usam dados fictícios.
 
 ## Conversa
 

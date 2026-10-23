@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
-from .config import MEMORY_DB
+from .config import CHECKPOINT_DB, LOGS_DIR, MEMORY_DB, PROMPTS_DIR
 
 
 def utc_now() -> str:
@@ -127,4 +127,50 @@ class MemoryStore:
                 cursor = connection.execute(f"DELETE FROM {table} WHERE user_id=?", (user_id,))
                 removed[table] = cursor.rowcount
         return removed
+
+    def forget_user_everywhere(
+        self,
+        user_id: str,
+        checkpoint_db: Path = CHECKPOINT_DB,
+        logs_dir: Path = LOGS_DIR,
+        prompts_dir: Path = PROMPTS_DIR,
+    ) -> dict[str, Any]:
+        """Remove o identificador de todas as estruturas graváveis conhecidas.
+
+        Checkpoints são apagados por prefixo do ``thread_id``. Logs JSON/JSONL são
+        redigidos preservando sua estrutura. Prompts são somente verificados: a
+        política proíbe inserir identificadores pessoais na memória procedural.
+        """
+        report: dict[str, Any] = {"memory": self.forget_user(user_id)}
+        checkpoint_rows: dict[str, int] = {}
+        if checkpoint_db.exists():
+            with sqlite3.connect(checkpoint_db) as connection:
+                tables = connection.execute(
+                    "SELECT name FROM sqlite_master WHERE type='table'"
+                ).fetchall()
+                for (table,) in tables:
+                    columns = [row[1] for row in connection.execute(f'PRAGMA table_info("{table}")')]
+                    if "thread_id" in columns:
+                        cursor = connection.execute(
+                            f'DELETE FROM "{table}" WHERE thread_id LIKE ?', (f"{user_id}:%",)
+                        )
+                        checkpoint_rows[table] = cursor.rowcount
+        report["checkpoints"] = checkpoint_rows
+
+        redacted_files: list[str] = []
+        if logs_dir.exists():
+            for path in sorted(logs_dir.glob("*.json*")):
+                text = path.read_text(encoding="utf-8")
+                if user_id in text:
+                    path.write_text(text.replace(user_id, "[REMOVIDO]"), encoding="utf-8")
+                    redacted_files.append(path.name)
+        report["logs_redacted"] = redacted_files
+
+        procedural_hits = []
+        if prompts_dir.exists():
+            procedural_hits = [path.name for path in prompts_dir.glob("*.md") if user_id in path.read_text(encoding="utf-8")]
+        if procedural_hits:
+            raise RuntimeError(f"Identificador encontrado em memória procedural: {procedural_hits}")
+        report["procedural_memory_hits"] = procedural_hits
+        return report
 

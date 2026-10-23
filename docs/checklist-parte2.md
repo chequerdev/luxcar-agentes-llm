@@ -7,7 +7,7 @@
 | 2. prompts | concluído | `src/prompts/`, `docs/prompts.md`, log de ablação |
 | 3. arquitetura | concluído | `docs/arquitetura.md` |
 | 4. RAG | concluído | `src/retrieval.py`, `docs/rag.md`, corpus vigente/revogado |
-| 5. memória | concluído com limitação declarada de remoção de logs/checkpoints | `src/memory.py`, `docs/memoria.md` |
+| 5. memória | concluído, inclusive remoção de memória/checkpoint/log e varredura procedural | `src/memory.py`, `scripts/remover_usuario.py`, testes |
 | 6. grafo | concluído | `src/graph.py`, `conferir_grafo.py`, `docs/grafo.md` |
 | 7. estado/reducers | concluído | `src/state.py`, log sem reducer |
 | 8. human-in-the-loop | concluído | `interrupt`, SQLiteSaver, prazo, edição e idempotência |
@@ -16,7 +16,7 @@
 
 ## Resultado validado em 23/10/2026
 
-- `python -m pytest -q`: **14 passed** (Python 3.14 emite aviso conhecido do `langchain-core`; recomenda-se 3.12/3.13);
+- `python -m pytest -q`: **15 passed** (Python 3.14 emite aviso conhecido do `langchain-core`; recomenda-se 3.12/3.13);
 - `python evals/executar_suite.py --smoke --delay 0`: **1 aprovado**;
 - `python conferir_grafo.py`: 15 nós incluindo início/fim e 20 arestas, 8 condicionais;
 - seis casos obrigatórios: todos `execution_mode=llm`, provedor Groq, modelo `openai/gpt-oss-20b`;
