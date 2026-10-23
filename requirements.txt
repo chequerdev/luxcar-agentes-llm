@@ -1,2 +1,6 @@
-mistralai
-python-dotenv
+langgraph==1.0.7
+langgraph-checkpoint-sqlite==3.0.3
+openai==2.6.1
+pydantic==2.12.3
+python-dotenv==1.1.1
+pytest==8.4.2

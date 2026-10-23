@@ -1,0 +1,26 @@
+{
+  "id": "politicas-v2",
+  "title": "Políticas operacionais LuxCar",
+  "status": "vigente",
+  "maintainer": "Administrador da base LuxCar",
+  "update_frequency": "sob mudança de processo; revisão mensal",
+  "sections": [
+    {
+      "title": "Fonte e atualidade",
+      "text": "O LuxCar usa uma base simulada de especificações. Não consulta preço, estoque, placa, proprietário ou disponibilidade em tempo real. A fonte oficial da resposta é o registro identificado em dados/veiculos.json."
+    },
+    {
+      "title": "Variação por versão",
+      "text": "Motor, câmbio, potência, torque e combustível podem variar por ano e versão. Quando a combinação não é única, o usuário deve informar marca, modelo, ano e versão antes de uma afirmação técnica."
+    },
+    {
+      "title": "Registro de interesse",
+      "text": "Registrar interesse cria uma solicitação persistente para atendimento. Antes da gravação, um operador deve revisar o veículo e o contato, podendo aprovar, rejeitar ou editar. Sem resposta em 24 horas, a solicitação expira sem gravação."
+    },
+    {
+      "title": "Privacidade",
+      "text": "O LuxCar não fornece CPF, placa ou identidade de proprietário. O titular pode solicitar remoção das memórias semântica, episódica e das solicitações associadas ao seu identificador."
+    }
+  ]
+}
+

@@ -1,218 +1,72 @@
-import os
+"""CLI e API pública do LuxCar Parte 2."""
+from __future__ import annotations
+
+import argparse
 import json
-from dotenv import load_dotenv
-from openai import OpenAI
+import sys
+from pathlib import Path
+from typing import Any
 
-from tools import buscar_veiculo, listar_versoes, registrar_conversa
+if __package__ in {None, ""}:
+    sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
 
-load_dotenv()
+from langgraph.types import Command
 
-api_key = os.getenv("GROQ_API_KEY")
+from src.config import RECURSION_LIMIT
+from src.contracts import AgentInput, AgentOutput, HumanDecision
+from src.graph import graph
 
-if not api_key:
-    raise ValueError("GROQ_API_KEY não encontrada no arquivo .env")
 
-client = OpenAI(
-    api_key=api_key,
-    base_url="https://api.groq.com/openai/v1"
-)
-
-MODEL = "openai/gpt-oss-20b"
-MAX_PASSOS = 5
-
-tools = [
-   
-    {
-        "type": "function",
-        "function": {
-            "name": "buscar_veiculo",
-            "description": (
-                "Busca informações de um veículo na base de dados do LuxCar. "
-                "Use esta ferramenta quando o usuário perguntar sobre um "
-                "veículo específico."
-            ),
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "marca": {
-                        "type": "string",
-                        "description": "Marca do veículo."
-                    },
-                    "modelo": {
-                        "type": "string",
-                        "description": "Modelo do veículo."
-                    },
-                    "ano": {
-                        "type": "integer",
-                        "description": "Ano do veículo."
-                    },
-                    "versao": {
-                        "type": ["string", "null"],
-                        "description": "Versão do veículo, se informada."
-                    }
-                },
-                "required": ["marca", "modelo", "ano", "versao"]
-            }
-        }
-    },
-    {
-        "type": "function",
-        "function": {
-            "name": "listar_versoes",
-            "description": (
-                "Lista as versões disponíveis de um veículo na base do LuxCar. "
-                "Use esta ferramenta quando o usuário informar marca, modelo e ano, "
-                "mas não informar a versão."
-            ),
-            "parameters": {
-                "type": "object",
-                "properties": {
-                    "marca": {
-                        "type": "string",
-                        "description": "Marca do veículo."
-                    },
-                    "modelo": {
-                        "type": "string",
-                        "description": "Modelo do veículo."
-                    },
-                    "ano": {
-                        "type": "integer",
-                        "description": "Ano do veículo."
-                    }
-                },
-                "required": ["marca", "modelo", "ano"]
-            }
-        }
-    }
-]
-
-funcoes = {
-    "buscar_veiculo": buscar_veiculo,
-    "listar_versoes": listar_versoes,
-    "registrar_conversa": registrar_conversa
-}
-
-def executar_agente(pergunta):
-    
-    estado = {
-        "pergunta": pergunta,
-        "ferramenta_utilizada": None,
-        "resultado_consulta": None,
-        "resposta": None,
-        "motivo_termino": None,
-        "passos": 0
-    }
-
-    mensagens = [
-        {
-            "role": "system",
-            "content": """
-Você é o LuxCar, um agente especializado em responder dúvidas sobre veículos.
-
-Regras:
-1. Responda somente sobre veículos.
-2. Quando precisar de informações sobre um veículo, use a ferramenta buscar_veiculo.
-3. Use exclusivamente as informações retornadas pelas ferramentas.
-4. Nunca invente, complete ou suponha informações que não estejam na base.
-5. Se o veículo não for encontrado, informe claramente que ele não está cadastrado na base.
-6. Se faltarem informações essenciais para identificar o veículo, peça esclarecimento.
-7. Se houver conflito entre a pergunta do usuário e os dados da ferramenta, considere os dados da ferramenta como fonte oficial.
-8. Não atribua características ao veículo que não tenham sido retornadas pela ferramenta.
-9. Seja objetivo e responda em português.
-"""
-        },
-        {
-            "role": "user",
-            "content": pergunta
-        }
-    ]
-
-    estado["passos"] += 1
-
-    resposta = client.chat.completions.create(
-    model=MODEL,
-    messages=mensagens,
-    tools=tools,
-    tool_choice="auto",
-    parallel_tool_calls=False
-)
-
-    mensagens.append(resposta.choices[0].message)
-
-    while resposta.choices[0].message.tool_calls and estado["passos"] < MAX_PASSOS:
-
-        for chamada in resposta.choices[0].message.tool_calls:
-
-            nome_funcao = chamada.function.name
-            estado["ferramenta_utilizada"] = nome_funcao
-
-            argumentos = json.loads(chamada.function.arguments)
-
-            print(f"\n[TOOL] {nome_funcao}")
-            print(f"[ARGUMENTOS] {argumentos}")
-
-            if nome_funcao not in funcoes:
-                resultado = {
-                    "erro": f"Ferramenta '{nome_funcao}' não encontrada."
-                }
-            else:
-                try:
-                    resultado = funcoes[nome_funcao](**argumentos)
-                except Exception as erro:
-                    resultado = {
-                        "erro": str(erro)
-                    }
-
-            estado["resultado_consulta"] = resultado
-
-            mensagens.append(
-                {
-                    "role": "tool",
-                    "name": nome_funcao,
-                    "content": json.dumps(
-                        resultado,
-                        ensure_ascii=False
-                    ),
-                    "tool_call_id": chamada.id
-                }
-            )
-
-        estado["passos"] += 1
-
-        resposta = client.chat.completions.create(
-            model=MODEL,
-            messages=mensagens,
-            tools=tools,
-            tool_choice="auto",
-            parallel_tool_calls=False
-        )
-
-        mensagens.append(resposta.choices[0].message)
-
-    estado["resposta"] = resposta.choices[0].message.content
-
-    if (
-        estado["passos"] >= MAX_PASSOS
-        and resposta.choices[0].message.tool_calls
-    ):
-        estado["motivo_termino"] = "limite_de_passos"
-    else:
-        estado["motivo_termino"] = "resposta_final"
-
-    registrar_conversa(
-        pergunta=estado["pergunta"],
-        resposta=estado["resposta"],
-        ferramenta_utilizada=estado["ferramenta_utilizada"]
+def _pending_output(request: AgentInput, result: dict[str, Any]) -> AgentOutput:
+    interrupts = result.get("__interrupt__", [])
+    action = interrupts[0].value if interrupts else {"question": "Aguardando aprovação"}
+    return AgentOutput(
+        result="A execução está pausada aguardando revisão humana.", sources=[], sufficient=False,
+        status="pending_approval", termination_reason="awaiting_human", thread_id=request.thread_id,
+        action=action,
     )
 
-    return estado["resposta"]
+
+def run_agent(request: AgentInput | str, **identity: Any) -> AgentOutput:
+    if isinstance(request, str):
+        request = AgentInput(text=request, **identity)
+    config = {"configurable": {"thread_id": request.thread_id}, "recursion_limit": RECURSION_LIMIT}
+    result = graph.invoke({"input": request.model_dump(), "thread_id": request.thread_id}, config=config)
+    if "__interrupt__" in result:
+        return _pending_output(request, result)
+    return AgentOutput.model_validate(result["output"])
+
+
+def resume_agent(thread_id: str, decision: HumanDecision | dict[str, Any]) -> AgentOutput:
+    decision = HumanDecision.model_validate(decision)
+    config = {"configurable": {"thread_id": thread_id}, "recursion_limit": RECURSION_LIMIT}
+    result = graph.invoke(Command(resume=decision.model_dump()), config=config)
+    if "__interrupt__" in result:
+        request = AgentInput.model_validate(result["input"])
+        return _pending_output(request, result)
+    return AgentOutput.model_validate(result["output"])
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(description="LuxCar — consulta em linguagem natural")
+    parser.add_argument("text", nargs="?", help="Pergunta em texto livre")
+    parser.add_argument("--user-id", default="cli")
+    parser.add_argument("--session-id", default="default")
+    parser.add_argument("--case-id")
+    parser.add_argument("--resume-thread")
+    parser.add_argument("--decision", choices=["approve", "reject", "edit"])
+    parser.add_argument("--edits", default="{}", help="JSON com campos editados")
+    args = parser.parse_args()
+    if args.resume_thread:
+        if not args.decision:
+            parser.error("--decision é obrigatório com --resume-thread")
+        output = resume_agent(args.resume_thread, HumanDecision(decision=args.decision, edits=json.loads(args.edits)))
+    else:
+        text = args.text or input("Usuário: ")
+        output = run_agent(AgentInput(text=text, user_id=args.user_id, session_id=args.session_id, case_id=args.case_id))
+    print(output.model_dump_json(indent=2))
 
 
 if __name__ == "__main__":
-
-    pergunta = input("Usuário: ")
-
-    resposta = executar_agente(pergunta)
-
-    print("\nLuxCar:", resposta)
+    main()
 

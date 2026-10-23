@@ -1,3 +1,6 @@
 .env
 __pycache__/
 *.pyc
+.runtime/
+.pytest_tmp/
+.pytest_cache/

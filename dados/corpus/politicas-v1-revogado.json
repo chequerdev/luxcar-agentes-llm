@@ -1,0 +1,14 @@
+{
+  "id": "politicas-v1-revogado",
+  "title": "Políticas antigas LuxCar",
+  "status": "revogado",
+  "maintainer": "Administrador da base LuxCar",
+  "update_frequency": "revogado em 2026-10-20",
+  "sections": [
+    {
+      "title": "Registro direto de interesse",
+      "text": "A versão antiga permitia registrar interesse imediatamente, sem revisão de operador. Esta regra foi revogada e não pode sustentar uma ação atual."
+    }
+  ]
+}
+
