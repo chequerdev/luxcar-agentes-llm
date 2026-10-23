@@ -25,7 +25,7 @@ MEMORY = MemoryStore()
 TRIAGE_PROMPT, TRIAGE_VERSION = load_prompt("triage-v2.md")
 load_prompt("answer-v2.md")  # valida o recurso procedural na importação
 KNOWN_ATTRIBUTES = {
-    "cambio": ("câmbio", "cambio", "transmissão", "transmissao", "marchas"),
+    "cambio": ("câmbio", "cambio", "transmissão", "transmissao", "marchas", "manual", "automático", "automatico"),
     "motor": ("motor", "motorização", "motorizacao"),
     "potencia_cv": ("potência", "potencia", "cv"),
     "torque_kgfm": ("torque", "kgfm"),

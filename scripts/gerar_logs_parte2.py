@@ -51,19 +51,24 @@ def checkpoint(thread_id: str) -> dict:
 
 def main() -> None:
     LOGS.mkdir(exist_ok=True)
-    metadata = {
+    base_metadata = {
         "executed_at": datetime.now(timezone.utc).isoformat(),
-        "execution_mode": "llm" if os.getenv("LUXCAR_USE_LLM") == "1" and API_KEY else "deterministic_fallback",
         "provider": PROVIDER,
         "model": MODEL,
         "prompt_versions": prompt_versions(),
         **git_metadata(),
     }
     for slug, text in CASES:
-        request = AgentInput(text=text, user_id="demonstracao", session_id=metadata["executed_at"], case_id=slug)
+        request = AgentInput(text=text, user_id="demonstracao", session_id=base_metadata["executed_at"], case_id=slug)
         initial = run_agent(request)
+        initial_state = checkpoint(request.thread_id)
+        triage_events = [event for event in initial_state.get("events", []) if event.get("kind") == "triage"]
+        triage_event = triage_events[-1] if triage_events else {}
+        metadata = {**base_metadata, "execution_mode": triage_event.get("mode", "unknown"),
+                    "llm_attempted": bool(API_KEY and os.getenv("LUXCAR_USE_LLM") == "1"),
+                    "llm_error": triage_event.get("reason") if triage_event.get("mode") == "deterministic_fallback" and API_KEY else None}
         record = {"case": slug, "metadata": metadata, "input": request.model_dump(),
-                  "initial_output": initial.model_dump(mode="json"), "initial_state": checkpoint(request.thread_id)}
+                  "initial_output": initial.model_dump(mode="json"), "initial_state": initial_state}
         if slug == "06-human-in-the-loop":
             resumed = resume_agent(request.thread_id, {
                 "decision": "edit", "edits": {"contact": "11888887777"}, "reviewer": "operador-demo"
