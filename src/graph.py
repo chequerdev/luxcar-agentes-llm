@@ -112,9 +112,14 @@ def recall_memory(state: LuxCarState) -> dict[str, Any]:
 
 def triage(state: LuxCarState) -> dict[str, Any]:
     decision, metadata = _llm_triage(state["input"]["text"])
-    if decision.route == "register_interest" and "interesse" not in normalize(state["input"]["text"]):
+    normal_text = normalize(state["input"]["text"])
+    if decision.route == "register_interest" and "interesse" not in normal_text:
         decision.route = "vehicle_query"
         decision.reason += "; rota de escrita bloqueada pelo guardrail"
+    unsupported = ("consumo", "preco", "quilometragem", "seguro", "autonomia")
+    if decision.route == "vehicle_query" and any(term in normal_text for term in unsupported):
+        decision.attribute = "geral"
+        decision.reason += "; atributo não existe no schema da base"
     return {"steps": state["steps"] + 1, "decision": decision.model_dump(),
             "events": _event("triage", decision=decision.model_dump(), **metadata)}
 
