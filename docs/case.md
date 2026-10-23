@@ -1,5 +1,20 @@
 # LuxCar — Case v1
 
+> Complemento da Parte 2 em 23/10/2026: as seções abaixo preservam a descrição original e acrescentam o aprendizado de domínio implementado.
+
+## Complemento do domínio
+
+- modelo não identifica sozinho uma ficha: ano e versão podem mudar câmbio, motor, potência e combustível;
+- “não encontrado” e “atributo não cadastrado” são situações diferentes;
+- “consumo” não é “combustível”; uma execução real mostrou essa confusão do LLM e motivou um portão de schema;
+- dizer “quero comprar” não autoriza escrita; só pedido explícito de registrar interesse abre a ação;
+- registrar interesse tem três passos: preparar, revisar/editar e gravar idempotentemente;
+- documento recuperado pode estar revogado; vigência é curadoria, não propriedade do ranking;
+- placa, CPF e proprietário estão fora da base e não podem ser inferidos;
+- “fonte oficial” significa o snapshot simulado versionado, não verdade de mercado em tempo real.
+
+Exceção arquitetural decisiva: aprovação repetida/retomada não pode criar duas solicitações. A escrita fica depois do `interrupt` e tem chave derivada do conteúdo.
+
 ## 1. O problema
 
 Usuários interessados em veículos precisam encontrar informações específicas sobre modelos, anos e versões, mas essas informações podem variar entre diferentes configurações do mesmo veículo e nem sempre estão disponíveis em um único local.

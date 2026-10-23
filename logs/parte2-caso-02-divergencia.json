@@ -1,0 +1,106 @@
+{
+  "case": "02-divergencia",
+  "metadata": {
+    "executed_at": "2026-10-23T03:45:04.886302+00:00",
+    "provider": "groq",
+    "model": "openai/gpt-oss-20b",
+    "prompt_versions": {
+      "answer-v2.md": "53be67ccec2c",
+      "memory-extraction-v2.md": "e104193d05c9",
+      "triage-v2.md": "73dd0062a80a"
+    },
+    "git_head": "890dc8a9da981e0a8e8de90325277903f296aa6c",
+    "worktree_dirty": false,
+    "source_tree_sha256": "4f913c59bf93514d2f6d8f48a016ae286c45b61d06f4df9d4a51165120dfb18f",
+    "execution_mode": "llm",
+    "llm_attempted": true,
+    "llm_error": null
+  },
+  "input": {
+    "text": "O Polo TSI 2018 é manual, certo?",
+    "user_id": "demonstracao",
+    "session_id": "2026-10-23T03:45:04.886302+00:00",
+    "case_id": "02-divergencia"
+  },
+  "initial_output": {
+    "result": "A premissa informada diverge da fonte. Segundo o cadastro, o Volkswagen Polo TSI 2018 tem câmbio: Automático de 6 velocidades.",
+    "sources": [
+      {
+        "source_id": "veiculo:1",
+        "source_type": "structured_record",
+        "location": "dados/veiculos.json#id=1",
+        "excerpt": "Volkswagen Polo TSI 2018: motor=1.0 TSI, potencia_cv=128, torque_kgfm=20.4, combustivel=Flex, cambio=Automático de 6 velocidades",
+        "score": 1.0,
+        "current": true
+      }
+    ],
+    "sufficient": true,
+    "status": "answered",
+    "termination_reason": "completed",
+    "retrieval_calls": 1,
+    "tool_calls": [
+      "buscar_veiculo"
+    ],
+    "thread_id": "demonstracao:2026-10-23T03:45:04.886302+00:00:02-divergencia",
+    "action": null
+  },
+  "initial_state": {
+    "steps": 5,
+    "decision": {
+      "route": "vehicle_query",
+      "marca": null,
+      "modelo": "Polo",
+      "ano": 2018,
+      "versao": "TSI",
+      "attribute": "cambio",
+      "missing": [],
+      "reason": "User asks if Polo TSI 2018 is manual",
+      "confidence": 0.95
+    },
+    "tool_calls": [
+      "buscar_veiculo"
+    ],
+    "retrieval_calls": 1,
+    "events": [
+      {
+        "at": "2026-10-23T03:45:06.822025+00:00",
+        "kind": "run_started",
+        "prompts": {
+          "answer-v2.md": "53be67ccec2c",
+          "memory-extraction-v2.md": "e104193d05c9",
+          "triage-v2.md": "73dd0062a80a"
+        },
+        "model": "openai/gpt-oss-20b"
+      },
+      {
+        "at": "2026-10-23T03:45:06.825439+00:00",
+        "kind": "memory_recalled",
+        "count": 1
+      },
+      {
+        "at": "2026-10-23T03:45:07.820236+00:00",
+        "kind": "triage",
+        "decision": {
+          "route": "vehicle_query",
+          "marca": null,
+          "modelo": "Polo",
+          "ano": 2018,
+          "versao": "TSI",
+          "attribute": "cambio",
+          "missing": [],
+          "reason": "User asks if Polo TSI 2018 is manual",
+          "confidence": 0.95
+        },
+        "mode": "llm",
+        "provider": "groq",
+        "model": "openai/gpt-oss-20b",
+        "prompt_version": "73dd0062a80a"
+      },
+      {
+        "at": "2026-10-23T03:45:07.822257+00:00",
+        "kind": "structured_retrieval",
+        "matches": 1
+      }
+    ]
+  }
+}

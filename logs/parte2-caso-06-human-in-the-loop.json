@@ -1,0 +1,295 @@
+{
+  "case": "06-human-in-the-loop",
+  "metadata": {
+    "executed_at": "2026-10-23T03:45:04.886302+00:00",
+    "provider": "groq",
+    "model": "openai/gpt-oss-20b",
+    "prompt_versions": {
+      "answer-v2.md": "53be67ccec2c",
+      "memory-extraction-v2.md": "e104193d05c9",
+      "triage-v2.md": "73dd0062a80a"
+    },
+    "git_head": "890dc8a9da981e0a8e8de90325277903f296aa6c",
+    "worktree_dirty": false,
+    "source_tree_sha256": "4f913c59bf93514d2f6d8f48a016ae286c45b61d06f4df9d4a51165120dfb18f",
+    "execution_mode": "llm",
+    "llm_attempted": true,
+    "llm_error": null
+  },
+  "input": {
+    "text": "Registre meu interesse no Polo TSI 2018, telefone 11999998888",
+    "user_id": "demonstracao",
+    "session_id": "2026-10-23T03:45:04.886302+00:00",
+    "case_id": "06-human-in-the-loop"
+  },
+  "initial_output": {
+    "result": "A execução está pausada aguardando revisão humana.",
+    "sources": [],
+    "sufficient": false,
+    "status": "pending_approval",
+    "termination_reason": "awaiting_human",
+    "retrieval_calls": 0,
+    "tool_calls": [],
+    "thread_id": "demonstracao:2026-10-23T03:45:04.886302+00:00:06-human-in-the-loop",
+    "action": {
+      "question": "Revise a ação antes da gravação.",
+      "action": {
+        "type": "registrar_interesse",
+        "marca": null,
+        "modelo": "Polo",
+        "ano": 2018,
+        "versao": "TSI",
+        "contact": "11999998888",
+        "prepared_at": "2026-10-23T03:45:10.577319+00:00"
+      },
+      "consequence": "Cria uma solicitação persistente para atendimento humano.",
+      "accepted": [
+        "approve",
+        "reject",
+        "edit"
+      ],
+      "timeout_hours": 24
+    }
+  },
+  "initial_state": {
+    "steps": 4,
+    "decision": {
+      "route": "register_interest",
+      "marca": null,
+      "modelo": "Polo",
+      "ano": 2018,
+      "versao": "TSI",
+      "attribute": "geral",
+      "missing": [
+        "marca"
+      ],
+      "reason": "User requested to register interest in a vehicle",
+      "confidence": 0.95
+    },
+    "tool_calls": [],
+    "retrieval_calls": 0,
+    "events": [
+      {
+        "at": "2026-10-23T03:45:09.930976+00:00",
+        "kind": "run_started",
+        "prompts": {
+          "answer-v2.md": "53be67ccec2c",
+          "memory-extraction-v2.md": "e104193d05c9",
+          "triage-v2.md": "73dd0062a80a"
+        },
+        "model": "openai/gpt-oss-20b"
+      },
+      {
+        "at": "2026-10-23T03:45:09.935356+00:00",
+        "kind": "memory_recalled",
+        "count": 1
+      },
+      {
+        "at": "2026-10-23T03:45:10.576243+00:00",
+        "kind": "triage",
+        "decision": {
+          "route": "register_interest",
+          "marca": null,
+          "modelo": "Polo",
+          "ano": 2018,
+          "versao": "TSI",
+          "attribute": "geral",
+          "missing": [
+            "marca"
+          ],
+          "reason": "User requested to register interest in a vehicle",
+          "confidence": 0.95
+        },
+        "mode": "llm",
+        "provider": "groq",
+        "model": "openai/gpt-oss-20b",
+        "prompt_version": "73dd0062a80a"
+      },
+      {
+        "at": "2026-10-23T03:45:10.577329+00:00",
+        "kind": "action_prepared",
+        "action": {
+          "type": "registrar_interesse",
+          "marca": null,
+          "modelo": "Polo",
+          "ano": 2018,
+          "versao": "TSI",
+          "contact": "11999998888",
+          "prepared_at": "2026-10-23T03:45:10.577319+00:00"
+        }
+      }
+    ]
+  },
+  "resume_with_edit_output": {
+    "result": "Solicitação de interesse registrada.",
+    "sources": [
+      {
+        "source_id": "d7a2d83be60300e3c4719cd29cee3bacf0c908ae5661ec5bdb673d54f93fb7f7",
+        "source_type": "tool",
+        "location": ".runtime/memory.sqlite#actions",
+        "excerpt": "Resultado da escrita idempotente",
+        "score": null,
+        "current": true
+      }
+    ],
+    "sufficient": true,
+    "status": "approved",
+    "termination_reason": "completed",
+    "retrieval_calls": 0,
+    "tool_calls": [
+      "registrar_interesse"
+    ],
+    "thread_id": "demonstracao:2026-10-23T03:45:04.886302+00:00:06-human-in-the-loop",
+    "action": {
+      "idempotency_key": "d7a2d83be60300e3c4719cd29cee3bacf0c908ae5661ec5bdb673d54f93fb7f7",
+      "ja_existia": false,
+      "payload": {
+        "type": "registrar_interesse",
+        "marca": null,
+        "modelo": "Polo",
+        "ano": 2018,
+        "versao": "TSI",
+        "contact": "11888887777",
+        "prepared_at": "2026-10-23T03:45:10.577319+00:00"
+      }
+    }
+  },
+  "repeated_approval_output": {
+    "result": "Solicitação de interesse registrada.",
+    "sources": [
+      {
+        "source_id": "d7a2d83be60300e3c4719cd29cee3bacf0c908ae5661ec5bdb673d54f93fb7f7",
+        "source_type": "tool",
+        "location": ".runtime/memory.sqlite#actions",
+        "excerpt": "Resultado da escrita idempotente",
+        "score": null,
+        "current": true
+      }
+    ],
+    "sufficient": true,
+    "status": "approved",
+    "termination_reason": "completed",
+    "retrieval_calls": 0,
+    "tool_calls": [
+      "registrar_interesse"
+    ],
+    "thread_id": "demonstracao:2026-10-23T03:45:04.886302+00:00:06-human-in-the-loop",
+    "action": {
+      "idempotency_key": "d7a2d83be60300e3c4719cd29cee3bacf0c908ae5661ec5bdb673d54f93fb7f7",
+      "ja_existia": false,
+      "payload": {
+        "type": "registrar_interesse",
+        "marca": null,
+        "modelo": "Polo",
+        "ano": 2018,
+        "versao": "TSI",
+        "contact": "11888887777",
+        "prepared_at": "2026-10-23T03:45:10.577319+00:00"
+      }
+    }
+  },
+  "action_rows_after_two_approvals": 1,
+  "final_state": {
+    "steps": 6,
+    "decision": {
+      "route": "register_interest",
+      "marca": null,
+      "modelo": "Polo",
+      "ano": 2018,
+      "versao": "TSI",
+      "attribute": "geral",
+      "missing": [
+        "marca"
+      ],
+      "reason": "User requested to register interest in a vehicle",
+      "confidence": 0.95
+    },
+    "tool_calls": [],
+    "retrieval_calls": 0,
+    "events": [
+      {
+        "at": "2026-10-23T03:45:09.930976+00:00",
+        "kind": "run_started",
+        "prompts": {
+          "answer-v2.md": "53be67ccec2c",
+          "memory-extraction-v2.md": "e104193d05c9",
+          "triage-v2.md": "73dd0062a80a"
+        },
+        "model": "openai/gpt-oss-20b"
+      },
+      {
+        "at": "2026-10-23T03:45:09.935356+00:00",
+        "kind": "memory_recalled",
+        "count": 1
+      },
+      {
+        "at": "2026-10-23T03:45:10.576243+00:00",
+        "kind": "triage",
+        "decision": {
+          "route": "register_interest",
+          "marca": null,
+          "modelo": "Polo",
+          "ano": 2018,
+          "versao": "TSI",
+          "attribute": "geral",
+          "missing": [
+            "marca"
+          ],
+          "reason": "User requested to register interest in a vehicle",
+          "confidence": 0.95
+        },
+        "mode": "llm",
+        "provider": "groq",
+        "model": "openai/gpt-oss-20b",
+        "prompt_version": "73dd0062a80a"
+      },
+      {
+        "at": "2026-10-23T03:45:10.577329+00:00",
+        "kind": "action_prepared",
+        "action": {
+          "type": "registrar_interesse",
+          "marca": null,
+          "modelo": "Polo",
+          "ano": 2018,
+          "versao": "TSI",
+          "contact": "11999998888",
+          "prepared_at": "2026-10-23T03:45:10.577319+00:00"
+        }
+      },
+      {
+        "at": "2026-10-23T03:45:10.593408+00:00",
+        "kind": "human_approved",
+        "reviewer": "operador-demo",
+        "edited": true
+      },
+      {
+        "at": "2026-10-23T03:45:10.615776+00:00",
+        "kind": "action_written",
+        "idempotency_key": "d7a2d83be60300e3c4719cd29cee3bacf0c908ae5661ec5bdb673d54f93fb7f7",
+        "ja_existia": false,
+        "payload": {
+          "type": "registrar_interesse",
+          "marca": null,
+          "modelo": "Polo",
+          "ano": 2018,
+          "versao": "TSI",
+          "contact": "11888887777",
+          "prepared_at": "2026-10-23T03:45:10.577319+00:00"
+        }
+      }
+    ],
+    "action_result": {
+      "idempotency_key": "d7a2d83be60300e3c4719cd29cee3bacf0c908ae5661ec5bdb673d54f93fb7f7",
+      "ja_existia": false,
+      "payload": {
+        "type": "registrar_interesse",
+        "marca": null,
+        "modelo": "Polo",
+        "ano": 2018,
+        "versao": "TSI",
+        "contact": "11888887777",
+        "prepared_at": "2026-10-23T03:45:10.577319+00:00"
+      }
+    }
+  }
+}

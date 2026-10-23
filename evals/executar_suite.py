@@ -87,6 +87,28 @@ def avaliar_trajetoria(caso, trajetoria):
 
 
 def executar(main, original_create, caso, versao, pausa):
+    if hasattr(main, 'run_agent'):
+        started = time.perf_counter()
+        try:
+            output = main.run_agent(
+                caso['entrada'], user_id='evals', session_id=f'{versao}-{caso["id"]}',
+                case_id=caso['id']
+            )
+            answer, erro = output.result, None
+            rastros = [{'nome': name, 'argumentos': {}, 'resultado': {
+                'sources': [source.model_dump(mode='json') for source in output.sources]
+            }, 'duracao_s': None} for name in output.tool_calls]
+        except Exception as ex:
+            answer, erro, rastros = None, f'{type(ex).__name__}: {ex}', []
+        if pausa:
+            time.sleep(pausa)
+        outcome, criterio = testar_resposta(caso, answer, rastros) if erro is None else ('erro', erro)
+        return {'caso_id': caso['id'], 'pergunta': caso['entrada'], 'classe': caso['classe'],
+                'origem': caso['origem'], 'versao': versao, 'resposta': answer,
+                'erro': erro, 'duracao_s': round(time.perf_counter()-started, 3),
+                'resultado_regra': outcome, 'criterio': criterio,
+                'trajetoria': rastros, 'metricas_trajetoria': avaliar_trajetoria(caso, rastros),
+                'registros_conversa': 0, 'efeito_colateral_ok': erro is None}
     rastros = []; historico_teste = []
     orig_funcoes = dict(main.funcoes)
     orig_registro = main.registrar_conversa
@@ -189,12 +211,12 @@ def main_cli():
     parser.add_argument('--delay',type=float,default=2.0,help='Pausa em segundos entre casos')
     args=parser.parse_args()
     import main
-    if not hasattr(main.client.chat,'completions'):
-        raise RuntimeError('Configure o main.py com SDK OpenAI compatível com Groq primeiro.')
+    if not hasattr(main, 'run_agent') and not hasattr(main.client.chat,'completions'):
+        raise RuntimeError('Configure um cliente compatível primeiro.')
     dataset=json.loads(DATASET.read_text(encoding='utf-8'))
     casos=dataset['casos'][:1] if args.smoke else dataset['casos']
     OUT.mkdir(parents=True,exist_ok=True)
-    original_create=main.client.chat.completions.create
+    original_create = None if hasattr(main, 'run_agent') else main.client.chat.completions.create
     experimentos=[('A',1)] if args.smoke else [('A',1),('A',2),('B',1),('B',2)]
     stamp={'data_utc':datetime.now(timezone.utc).isoformat(), 'modelo':main.MODEL,
            'provider':'Groq (OpenAI-compatible)', 'modo':'smoke' if args.smoke else 'full',

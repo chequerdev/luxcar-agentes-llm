@@ -1,5 +1,14 @@
 # LuxCar — Fontes v1
 
+## Fontes acrescentadas na Parte 2
+
+- Enunciado “Trabalho da disciplina — Parte 2: O agente de verdade”, fornecido pelo professor e usado como checklist em 23/10/2026.
+- LangGraph (`StateGraph`, reducers, checkpoint e `interrupt`): <https://docs.langchain.com/oss/python/langgraph/overview>
+- Pydantic v2: <https://docs.pydantic.dev/latest/>
+- SDK OpenAI compatível usado com endpoint Groq: <https://github.com/openai/openai-python>
+
+Os dados automotivos e políticas em `dados/` são simulados; não são apresentados como especificações oficiais de fabricante.
+
 Este documento reúne as fontes utilizadas na definição do case, da arquitetura, da análise de modelos e da base de conhecimento do LuxCar.
 
 ## 1. Fontes da disciplina

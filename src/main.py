@@ -12,9 +12,11 @@ if __package__ in {None, ""}:
 
 from langgraph.types import Command
 
-from src.config import RECURSION_LIMIT
+from src.config import MAX_STEPS, MODEL, RECURSION_LIMIT
 from src.contracts import AgentInput, AgentOutput, HumanDecision
 from src.graph import graph
+
+MAX_PASSOS = MAX_STEPS  # compatibilidade com a suíte histórica da Parte 1
 
 
 def _pending_output(request: AgentInput, result: dict[str, Any]) -> AgentOutput:

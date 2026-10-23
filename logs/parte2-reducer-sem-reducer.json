@@ -1,0 +1,7 @@
+{
+  "executed_at": "2026-10-23T03:45:13.241921+00:00",
+  "langgraph": "1.0.7",
+  "observed": "exception",
+  "exception_type": "InvalidUpdateError",
+  "message": "At key 'evidence': Can receive only one value per step. Use an Annotated key to handle multiple values.\nFor troubleshooting, visit: https://docs.langchain.com/oss/python/langgraph/errors/INVALID_CONCURRENT_GRAPH_UPDATE"
+}

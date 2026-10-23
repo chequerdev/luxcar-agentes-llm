@@ -1,0 +1,106 @@
+{
+  "case": "05-fora-do-corpus",
+  "metadata": {
+    "executed_at": "2026-10-23T03:45:04.886302+00:00",
+    "provider": "groq",
+    "model": "openai/gpt-oss-20b",
+    "prompt_versions": {
+      "answer-v2.md": "53be67ccec2c",
+      "memory-extraction-v2.md": "e104193d05c9",
+      "triage-v2.md": "73dd0062a80a"
+    },
+    "git_head": "890dc8a9da981e0a8e8de90325277903f296aa6c",
+    "worktree_dirty": false,
+    "source_tree_sha256": "4f913c59bf93514d2f6d8f48a016ae286c45b61d06f4df9d4a51165120dfb18f",
+    "execution_mode": "llm",
+    "llm_attempted": true,
+    "llm_error": null
+  },
+  "input": {
+    "text": "Qual é o consumo rodoviário do Polo TSI 2018?",
+    "user_id": "demonstracao",
+    "session_id": "2026-10-23T03:45:04.886302+00:00",
+    "case_id": "05-fora-do-corpus"
+  },
+  "initial_output": {
+    "result": "A base não possui o atributo pedido ou a pergunta não especifica qual dado técnico consultar.",
+    "sources": [
+      {
+        "source_id": "veiculo:1",
+        "source_type": "structured_record",
+        "location": "dados/veiculos.json#id=1",
+        "excerpt": "Volkswagen Polo TSI 2018: motor=1.0 TSI, potencia_cv=128, torque_kgfm=20.4, combustivel=Flex, cambio=Automático de 6 velocidades",
+        "score": 1.0,
+        "current": true
+      }
+    ],
+    "sufficient": false,
+    "status": "not_found",
+    "termination_reason": "source_missing",
+    "retrieval_calls": 1,
+    "tool_calls": [
+      "buscar_veiculo"
+    ],
+    "thread_id": "demonstracao:2026-10-23T03:45:04.886302+00:00:05-fora-do-corpus",
+    "action": null
+  },
+  "initial_state": {
+    "steps": 5,
+    "decision": {
+      "route": "vehicle_query",
+      "marca": "Volkswagen",
+      "modelo": "Polo",
+      "ano": 2018,
+      "versao": "TSI",
+      "attribute": "geral",
+      "missing": [],
+      "reason": "User requested highway fuel consumption for a specific vehicle model and year.; atributo não existe no schema da base",
+      "confidence": 0.95
+    },
+    "tool_calls": [
+      "buscar_veiculo"
+    ],
+    "retrieval_calls": 1,
+    "events": [
+      {
+        "at": "2026-10-23T03:45:09.121695+00:00",
+        "kind": "run_started",
+        "prompts": {
+          "answer-v2.md": "53be67ccec2c",
+          "memory-extraction-v2.md": "e104193d05c9",
+          "triage-v2.md": "73dd0062a80a"
+        },
+        "model": "openai/gpt-oss-20b"
+      },
+      {
+        "at": "2026-10-23T03:45:09.125457+00:00",
+        "kind": "memory_recalled",
+        "count": 1
+      },
+      {
+        "at": "2026-10-23T03:45:09.908285+00:00",
+        "kind": "triage",
+        "decision": {
+          "route": "vehicle_query",
+          "marca": "Volkswagen",
+          "modelo": "Polo",
+          "ano": 2018,
+          "versao": "TSI",
+          "attribute": "geral",
+          "missing": [],
+          "reason": "User requested highway fuel consumption for a specific vehicle model and year.; atributo não existe no schema da base",
+          "confidence": 0.95
+        },
+        "mode": "llm",
+        "provider": "groq",
+        "model": "openai/gpt-oss-20b",
+        "prompt_version": "73dd0062a80a"
+      },
+      {
+        "at": "2026-10-23T03:45:09.909955+00:00",
+        "kind": "structured_retrieval",
+        "matches": 1
+      }
+    ]
+  }
+}

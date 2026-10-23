@@ -1,0 +1,97 @@
+{
+  "case": "03-registro-inexistente",
+  "metadata": {
+    "executed_at": "2026-10-23T03:45:04.886302+00:00",
+    "provider": "groq",
+    "model": "openai/gpt-oss-20b",
+    "prompt_versions": {
+      "answer-v2.md": "53be67ccec2c",
+      "memory-extraction-v2.md": "e104193d05c9",
+      "triage-v2.md": "73dd0062a80a"
+    },
+    "git_head": "890dc8a9da981e0a8e8de90325277903f296aa6c",
+    "worktree_dirty": false,
+    "source_tree_sha256": "4f913c59bf93514d2f6d8f48a016ae286c45b61d06f4df9d4a51165120dfb18f",
+    "execution_mode": "llm",
+    "llm_attempted": true,
+    "llm_error": null
+  },
+  "input": {
+    "text": "Qual câmbio o Golf R 2020 possui?",
+    "user_id": "demonstracao",
+    "session_id": "2026-10-23T03:45:04.886302+00:00",
+    "case_id": "03-registro-inexistente"
+  },
+  "initial_output": {
+    "result": "Não encontrei uma fonte vigente que responda a essa pergunta. Posso consultar apenas os dados cadastrados no LuxCar.",
+    "sources": [],
+    "sufficient": false,
+    "status": "not_found",
+    "termination_reason": "source_missing",
+    "retrieval_calls": 1,
+    "tool_calls": [
+      "buscar_veiculo"
+    ],
+    "thread_id": "demonstracao:2026-10-23T03:45:04.886302+00:00:03-registro-inexistente",
+    "action": null
+  },
+  "initial_state": {
+    "steps": 5,
+    "decision": {
+      "route": "vehicle_query",
+      "marca": null,
+      "modelo": "Golf R",
+      "ano": 2020,
+      "versao": null,
+      "attribute": "cambio",
+      "missing": [],
+      "reason": "User requested gearbox information for Golf R 2020",
+      "confidence": 1.0
+    },
+    "tool_calls": [
+      "buscar_veiculo"
+    ],
+    "retrieval_calls": 1,
+    "events": [
+      {
+        "at": "2026-10-23T03:45:07.843029+00:00",
+        "kind": "run_started",
+        "prompts": {
+          "answer-v2.md": "53be67ccec2c",
+          "memory-extraction-v2.md": "e104193d05c9",
+          "triage-v2.md": "73dd0062a80a"
+        },
+        "model": "openai/gpt-oss-20b"
+      },
+      {
+        "at": "2026-10-23T03:45:07.846372+00:00",
+        "kind": "memory_recalled",
+        "count": 1
+      },
+      {
+        "at": "2026-10-23T03:45:08.585144+00:00",
+        "kind": "triage",
+        "decision": {
+          "route": "vehicle_query",
+          "marca": null,
+          "modelo": "Golf R",
+          "ano": 2020,
+          "versao": null,
+          "attribute": "cambio",
+          "missing": [],
+          "reason": "User requested gearbox information for Golf R 2020",
+          "confidence": 1.0
+        },
+        "mode": "llm",
+        "provider": "groq",
+        "model": "openai/gpt-oss-20b",
+        "prompt_version": "73dd0062a80a"
+      },
+      {
+        "at": "2026-10-23T03:45:08.586983+00:00",
+        "kind": "structured_retrieval",
+        "matches": 0
+      }
+    ]
+  }
+}

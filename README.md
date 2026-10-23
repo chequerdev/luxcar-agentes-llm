@@ -1,336 +1,99 @@
-# LuxCar — Agente de IA
+# LuxCar — agente de consulta automotiva
 
-Trabalho acadêmico da disciplina de Agentes de IA / LLM.
+O LuxCar recebe uma pergunta em texto livre, identifica a intenção com LLM, consulta registros ou documentos e devolve um objeto Pydantic com resultado, fontes e suficiência. Uma solicitação de interesse só é gravada depois de revisão humana.
 
-O LuxCar é um agente especializado em responder dúvidas sobre veículos utilizando um modelo de linguagem e uma base de dados simulada.
+## Rodar em menos de cinco minutos
 
----
+Recomendado: Python 3.12 ou 3.13. A suíte também passa no Python 3.14, com um aviso de compatibilidade emitido pelo `langchain-core`.
 
-## 1. Sobre o projeto
+```powershell
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+python -m pip install -r requirements.txt
+Copy-Item .env.example .env
+```
 
-O objetivo do LuxCar é permitir que o usuário faça perguntas sobre veículos utilizando linguagem natural.
+Preencha uma chave em `.env` (`GROQ_API_KEY`, `XAI_API_KEY` ou `OPENAI_API_KEY`) e, quando necessário, `LUXCAR_MODEL` e `LUXCAR_BASE_URL`. Sem chave, o sistema usa e registra um classificador determinístico conservador; ele nunca finge que chamou um modelo.
 
-O agente interpreta a pergunta, identifica as informações necessárias sobre o veículo e utiliza ferramentas para consultar a base de dados do sistema.
+```powershell
+python -m src.main "Qual câmbio o Polo TSI 2018 possui?" --user-id demo --session-id conversa-1
+```
 
-Exemplo:
+Saída real de 23/10/2026, código no commit `890dc8a9da981e0a8e8de90325277903f296aa6c`:
 
-> Qual câmbio o Polo TSI 2018 possui?
+```json
+{
+  "result": "Segundo o cadastro, o Volkswagen Polo TSI 2018 tem câmbio: Automático de 6 velocidades.",
+  "sources": [{
+    "source_id": "veiculo:1",
+    "source_type": "structured_record",
+    "location": "dados/veiculos.json#id=1",
+    "excerpt": "Volkswagen Polo TSI 2018: motor=1.0 TSI, potencia_cv=128, torque_kgfm=20.4, combustivel=Flex, cambio=Automático de 6 velocidades",
+    "score": 1.0,
+    "current": true
+  }],
+  "sufficient": true,
+  "status": "answered",
+  "termination_reason": "completed",
+  "retrieval_calls": 1,
+  "tool_calls": ["buscar_veiculo"],
+  "thread_id": "demonstracao:2026-10-23T03:45:04.886302+00:00:01-simples",
+  "action": null
+}
+```
 
-O agente identifica o veículo e consulta a base de dados para retornar a informação disponível.
+O objeto completo está em `logs/parte2-caso-01-simples.json`.
 
----
+## Quando o grafo para
 
-## 2. O que o agente faz
+O pedido abaixo não grava nada imediatamente:
 
-Atualmente, o LuxCar consegue:
+```powershell
+python -m src.main "Registre meu interesse no Polo TSI 2018, telefone 11999998888" --user-id demo --session-id conversa-2 --case-id proposta
+```
 
-- Interpretar perguntas relacionadas a veículos;
-- Identificar marca, modelo, ano e versão quando disponíveis;
-- Consultar veículos na base de dados;
-- Listar versões disponíveis de um veículo;
-- Responder utilizando as informações retornadas pelas ferramentas;
-- Informar quando um veículo não está cadastrado;
-- Pedir esclarecimentos quando faltam informações necessárias;
-- Identificar perguntas fora do escopo de veículos;
-- Registrar as interações realizadas em um arquivo de histórico.
+A saída terá `status: "pending_approval"` e um `thread_id`. Um operador pode rejeitar, aprovar ou editar:
 
----
+```powershell
+python -m src.main --resume-thread "demo:conversa-2:proposta" --decision edit --edits '{"contact":"11888887777"}'
+```
 
-## 3. O que o agente não faz
+Após 24 horas, uma retomada expira sem gravar. A chave de idempotência deriva do conteúdo: aprovação repetida não duplica a solicitação.
 
-Nesta primeira versão, o LuxCar:
+## Verificação e entrega
 
-- Não realiza compra ou venda de veículos;
-- Não realiza negociações;
-- Não altera os dados dos veículos;
-- Não consulta dados externos em tempo real;
-- Não fornece informações que não estejam disponíveis na base;
-- Não responde perguntas fora do domínio de veículos;
-- Não substitui uma consulta técnica ou oficial do fabricante.
+```powershell
+$env:LUXCAR_USE_LLM='0'
+python -m pytest -q
+python conferir_grafo.py
+python -m scripts.demonstrar_reducer
+python -m scripts.gerar_logs_parte2
+git status --short
+git log -5 --oneline
+```
 
----
+`scripts/gerar_logs_parte2.py` usa o provedor configurado. Confira `metadata.execution_mode` em cada log; `llm` só aparece quando a chamada foi bem-sucedida.
 
-## 4. Arquitetura
-
-O funcionamento básico do agente segue o fluxo:
+## Estrutura principal
 
 ```text
-Usuário
-   |
-   v
-Pergunta em linguagem natural
-   |
-   v
-Modelo de linguagem
-   |
-   +----> buscar_veiculo
-   |
-   +----> listar_versoes
-   |
-   v
-Processamento do resultado
-   |
-   v
-Resposta ao usuário
-   |
-   v
-Registro da interação
-
-O modelo de linguagem é responsável pela interpretação da solicitação e pela decisão de utilizar uma ferramenta.
-
-As ferramentas são responsáveis pelo acesso aos dados estruturados.
-
-Mais detalhes sobre a arquitetura estão disponíveis em:
-
-docs/arquitetura-v1.md
-
-5. Tecnologias utilizadas
-Python
-Mistral AI
-API da Mistral
-JSON
-python-dotenv
-Git e GitHub
-6. Estrutura do projeto
-luxcar-agentes-llm/
-│
-├── dados/
-│   └── veiculos.json
-│
-├── docs/
-│   ├── arquitetura-v1.md
-│   ├── base-de-conhecimento-v1.md
-│   ├── case.md
-│   ├── fontes.md
-│   └── modelos.md
-│
-├── logs/
-│   ├── caso-01-simples.json
-│   ├── caso-02-divergencia.json
-│   ├── caso-03-inexistente.json
-│   ├── caso-04-fora-escopo.json
-│   └── historico.jsonl
-│
-├── prompts/
-│   └── luxcar-v1.md
-│
-├── src/
-│   ├── main.py
-│   └── tools.py
-│
-├── .env.example
-├── .gitignore
-├── README.md
-└── requirements.txt
-7. Base de dados
-
-A primeira versão utiliza uma base de dados simulada em formato JSON.
-
-Arquivo:
-
-dados/veiculos.json
-
-A base contém informações estruturadas dos veículos, como:
-
-Marca;
-Modelo;
-Versão;
-Ano;
-Motor;
-Potência;
-Torque;
-Combustível;
-Câmbio.
-
-As ferramentas do agente acessam essa base para obter as informações necessárias para responder às perguntas.
-
-8. Ferramentas
-
-O agente possui ferramentas para acessar e registrar informações.
-
-buscar_veiculo
-
-Realiza a busca de um veículo específico considerando:
-
-Marca;
-Modelo;
-Ano;
-Versão.
-
-Exemplo:
-
-Volkswagen Polo TSI 2018
-
-Retorno de exemplo:
-
-Volkswagen Polo TSI 2018 possui câmbio automático de 6 velocidades.
-listar_versoes
-
-Lista as versões disponíveis para uma determinada combinação de:
-
-Marca;
-Modelo;
-Ano.
-
-É utilizada quando o usuário informa o veículo, mas não informa a versão.
-
-Exemplo:
-
-Qual versão do Polo 2018 existe?
-registrar_conversa
-
-Registra a interação realizada pelo agente no arquivo:
-
-logs/historico.jsonl
-
-O registro contém informações como:
-
-Pergunta;
-Resposta;
-Ferramenta utilizada.
-9. Regras do agente
-
-O comportamento do LuxCar é orientado por um prompt de sistema.
-
-Entre as principais regras estão:
-
-Responder somente sobre veículos;
-Utilizar as ferramentas quando precisar consultar informações;
-Utilizar somente informações retornadas pelas ferramentas;
-Não inventar informações;
-Informar quando um veículo não estiver cadastrado;
-Pedir esclarecimentos quando faltarem informações essenciais;
-Considerar os dados da ferramenta como fonte oficial em caso de conflito;
-Não atribuir características que não tenham sido retornadas pela ferramenta;
-Responder de forma objetiva e em português.
-
-O prompt utilizado pelo projeto está versionado em:
-
-prompts/luxcar-v1.md
-10. Como executar
-10.1 Pré-requisitos
-
-É necessário ter instalado:
-
-Python 3;
-Git;
-Uma chave de API da Mistral.
-10.2 Instalação das dependências
-
-No terminal, dentro da pasta do projeto, execute:
-
-pip install -r requirements.txt
-10.3 Configuração da API
-
-Crie um arquivo chamado:
-
-.env
-
-na raiz do projeto.
-
-Adicione:
-
-MISTRAL_API_KEY=sua_chave_aqui
-
-O arquivo .env não deve ser enviado para o GitHub.
-
-O projeto possui o arquivo:
-
-.env.example
-
-como modelo de configuração.
-
-10.4 Executando o agente
-
-No terminal, execute:
-
-python src/main.py
-
-O programa solicitará uma pergunta:
-
-Usuário:
-
-Digite a pergunta e pressione Enter.
-
-11. Exemplo de execução
-
-Entrada:
-
-Qual câmbio o Polo TSI 2018 possui?
-
-O agente identifica o veículo e chama a ferramenta:
-
-[TOOL] buscar_veiculo
-[ARGUMENTOS] {'marca': 'Volkswagen', 'modelo': 'Polo', 'ano': 2018, 'versao': 'TSI'}
-
-Resposta:
-
-LuxCar: O Volkswagen Polo TSI 2018 possui câmbio automático de 6 velocidades.
-12. Tratamento de casos
-
-A primeira versão do projeto foi testada considerando diferentes situações.
-
-Caso 1 — Pergunta simples
-Qual câmbio o Polo TSI 2018 possui?
-
-O agente consulta a base e apresenta a informação encontrada.
-
-Caso 2 — Divergência
-O Polo TSI 2018 tem câmbio manual. Qual é o câmbio dele?
-
-O agente utiliza os dados retornados pela ferramenta como fonte oficial e informa a informação cadastrada na base.
-
-Caso 3 — Veículo inexistente
-Qual câmbio o Golf R 2020 possui?
-
-Quando o veículo não está cadastrado, o agente informa que não encontrou o registro na base.
-
-Caso 4 — Fora do escopo
-Qual é a previsão do tempo para amanhã?
-
-O agente informa que a solicitação está fora do escopo do LuxCar.
-
-Os registros desses testes estão disponíveis na pasta:
-
-logs/
-13. Limites da primeira versão
-
-A primeira versão utiliza uma base simulada e possui escopo limitado.
-
-O agente depende das informações disponíveis em:
-
-dados/veiculos.json
-
-Caso determinada informação não esteja cadastrada, o agente não deve inventá-la.
-
-Também existe um limite de passos de execução definido no código:
-
-MAX_PASSOS = 5
-
-Esse limite evita que o agente fique executando chamadas indefinidamente.
-
-14. Documentação
-
-A documentação do projeto está organizada na pasta docs/.
-
-Principais documentos:
-
-docs/case.md — descrição do caso de uso;
-docs/modelos.md — análise do modelo utilizado;
-docs/fontes.md — fontes utilizadas na pesquisa;
-docs/arquitetura-v1.md — arquitetura da primeira versão;
-docs/base-de-conhecimento-v1.md — planejamento da base de conhecimento.
-15. Evolução planejada
-
-A primeira versão representa uma arquitetura inicial do agente.
-
-Nas próximas etapas do projeto poderão ser incorporados recursos como:
-
-RAG;
-Memória;
-MCP;
-LangGraph;
-Multiagentes;
-Segurança;
-Observabilidade;
-Gerenciamento de custos.
+src/contracts.py       entrada, saída e decisão Pydantic
+src/graph.py           StateGraph compilado e human-in-the-loop
+src/retrieval.py       consulta estruturada e busca textual
+src/memory.py          memórias e escrita idempotente em SQLite
+src/prompts/           prompts carregados em execução
+dados/corpus/          documentos vigentes e revogado
+docs/                  decisões e evidências de projeto
+logs/parte2-*.json     execuções reais da Parte 2
+tests/                 13 testes automatizados
+```
+
+## Limites honestos
+
+- corpus e veículos são simulados; não há preço ou estoque em tempo real;
+- o checkpoint e a memória ficam em SQLite local, sem replicação;
+- a busca documental é textual, não vetorial;
+- o modelo só classifica/extrai a intenção; código controla suficiência e escrita;
+- logs podem conter argumentos de demonstração e devem ser tratados conforme a política de retenção.
+
+Detalhes: `docs/io.md`, `docs/prompts.md`, `docs/arquitetura.md`, `docs/rag.md`, `docs/memoria.md`, `docs/grafo.md` e `docs/humano.md`.

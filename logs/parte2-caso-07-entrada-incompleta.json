@@ -1,0 +1,98 @@
+{
+  "case": "07-entrada-incompleta",
+  "metadata": {
+    "executed_at": "2026-10-23T03:45:04.886302+00:00",
+    "provider": "groq",
+    "model": "openai/gpt-oss-20b",
+    "prompt_versions": {
+      "answer-v2.md": "53be67ccec2c",
+      "memory-extraction-v2.md": "e104193d05c9",
+      "triage-v2.md": "73dd0062a80a"
+    },
+    "git_head": "890dc8a9da981e0a8e8de90325277903f296aa6c",
+    "worktree_dirty": false,
+    "source_tree_sha256": "4f913c59bf93514d2f6d8f48a016ae286c45b61d06f4df9d4a51165120dfb18f",
+    "execution_mode": "llm",
+    "llm_attempted": true,
+    "llm_error": null
+  },
+  "input": {
+    "text": "Qual câmbio ele usa?",
+    "user_id": "demonstracao",
+    "session_id": "2026-10-23T03:45:04.886302+00:00",
+    "case_id": "07-entrada-incompleta"
+  },
+  "initial_output": {
+    "result": "Preciso de marca, modelo, ano, versao para responder sem adivinhar.",
+    "sources": [],
+    "sufficient": false,
+    "status": "clarification_needed",
+    "termination_reason": "insufficient_input",
+    "retrieval_calls": 0,
+    "tool_calls": [],
+    "thread_id": "demonstracao:2026-10-23T03:45:04.886302+00:00:07-entrada-incompleta",
+    "action": null
+  },
+  "initial_state": {
+    "steps": 4,
+    "decision": {
+      "route": "clarify",
+      "marca": null,
+      "modelo": null,
+      "ano": null,
+      "versao": null,
+      "attribute": "cambio",
+      "missing": [
+        "marca",
+        "modelo",
+        "ano",
+        "versao"
+      ],
+      "reason": "Insufficient vehicle identification",
+      "confidence": 0.9
+    },
+    "tool_calls": [],
+    "retrieval_calls": 0,
+    "events": [
+      {
+        "at": "2026-10-23T03:45:10.632000+00:00",
+        "kind": "run_started",
+        "prompts": {
+          "answer-v2.md": "53be67ccec2c",
+          "memory-extraction-v2.md": "e104193d05c9",
+          "triage-v2.md": "73dd0062a80a"
+        },
+        "model": "openai/gpt-oss-20b"
+      },
+      {
+        "at": "2026-10-23T03:45:10.637359+00:00",
+        "kind": "memory_recalled",
+        "count": 1
+      },
+      {
+        "at": "2026-10-23T03:45:11.315626+00:00",
+        "kind": "triage",
+        "decision": {
+          "route": "clarify",
+          "marca": null,
+          "modelo": null,
+          "ano": null,
+          "versao": null,
+          "attribute": "cambio",
+          "missing": [
+            "marca",
+            "modelo",
+            "ano",
+            "versao"
+          ],
+          "reason": "Insufficient vehicle identification",
+          "confidence": 0.9
+        },
+        "mode": "llm",
+        "provider": "groq",
+        "model": "openai/gpt-oss-20b",
+        "prompt_version": "73dd0062a80a"
+      }
+    ]
+  }
+}

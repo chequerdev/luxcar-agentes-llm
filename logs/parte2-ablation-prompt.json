@@ -1,0 +1,108 @@
+{
+  "executed_at": "2026-10-23T03:45:46.909271+00:00",
+  "provider": "groq",
+  "model": "openai/gpt-oss-20b",
+  "prompt_version": "73dd0062a80a",
+  "removed_sentence": "Nunca complete ano, versão, telefone ou veículo por suposição.",
+  "cases": [
+    {
+      "input": "Qual câmbio ele usa?",
+      "with_sentence": {
+        "route": "clarify",
+        "marca": null,
+        "modelo": null,
+        "ano": null,
+        "versao": null,
+        "attribute": "cambio",
+        "missing": [
+          "marca",
+          "modelo",
+          "ano",
+          "versao"
+        ],
+        "reason": "User asks about gearbox but does not provide vehicle identification",
+        "confidence": 0.9
+      },
+      "without_sentence": {
+        "route": "clarify",
+        "marca": null,
+        "modelo": null,
+        "ano": null,
+        "versao": null,
+        "attribute": "cambio",
+        "missing": [
+          "marca",
+          "modelo",
+          "ano",
+          "versao"
+        ],
+        "reason": "User asks about gearbox but does not specify vehicle details",
+        "confidence": 0.9
+      }
+    },
+    {
+      "input": "Quais versões do Polo existem?",
+      "with_sentence": {
+        "route": "vehicle_query",
+        "marca": null,
+        "modelo": "Polo",
+        "ano": null,
+        "versao": null,
+        "attribute": "versoes",
+        "missing": [
+          "marca"
+        ],
+        "reason": "User requested the available versions of the Polo model.",
+        "confidence": 0.95
+      },
+      "without_sentence": {
+        "route": "vehicle_query",
+        "marca": null,
+        "modelo": "Polo",
+        "ano": null,
+        "versao": null,
+        "attribute": "versoes",
+        "missing": [
+          "marca"
+        ],
+        "reason": "User requested versions of Polo but did not specify the brand",
+        "confidence": 0.9
+      }
+    },
+    {
+      "input": "Registre meu interesse nesse carro.",
+      "with_sentence": {
+        "route": "register_interest",
+        "marca": null,
+        "modelo": null,
+        "ano": null,
+        "versao": null,
+        "attribute": "geral",
+        "missing": [
+          "marca",
+          "modelo",
+          "ano",
+          "versao"
+        ],
+        "reason": "User requested to register interest in a vehicle",
+        "confidence": 1.0
+      },
+      "without_sentence": {
+        "route": "register_interest",
+        "marca": null,
+        "modelo": null,
+        "ano": null,
+        "versao": null,
+        "attribute": "geral",
+        "missing": [
+          "marca",
+          "modelo",
+          "ano",
+          "versao"
+        ],
+        "reason": "User requested to register interest in a vehicle but did not provide vehicle details.",
+        "confidence": 1.0
+      }
+    }
+  ]
+}

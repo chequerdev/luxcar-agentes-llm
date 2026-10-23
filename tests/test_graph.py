@@ -2,7 +2,7 @@ from uuid import uuid4
 
 from src.contracts import AgentInput
 from src.main import resume_agent, run_agent
-from src.graph import MEMORY
+from src.graph import MEMORY, human_approval
 
 
 def request(text: str, case: str) -> AgentInput:
@@ -43,4 +43,16 @@ def test_hitl_edit_and_repeated_resume_do_not_duplicate(monkeypatch):
     repeated = resume_agent(req.thread_id, {"decision": "approve"})
     assert repeated.action["idempotency_key"] == approved.action["idempotency_key"]
     assert MEMORY.count_action(approved.action["idempotency_key"]) == 1
+
+
+def test_late_approval_expires_without_interrupt():
+    state = {
+        "steps": 4,
+        "proposed_action": {
+            "type": "registrar_interesse", "modelo": "Polo", "ano": 2018,
+            "prepared_at": "2020-01-01T00:00:00+00:00",
+        },
+    }
+    update = human_approval(state)
+    assert update["action_result"] == {"approved": False, "expired": True}
 
