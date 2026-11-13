@@ -1,0 +1,39 @@
+[
+  {
+    "versao": "3.0.0",
+    "n": 35,
+    "p50_ms": 5.666,
+    "p95_ms": 9.09,
+    "motivos": {
+      "completed": 17,
+      "source_missing": 7,
+      "awaiting_human": 4,
+      "insufficient_input": 4,
+      "out_of_scope": 2,
+      "human_rejected": 1
+    },
+    "ferramentas": {
+      "buscar_veiculo": {
+        "total": 19,
+        "erros": 0,
+        "taxa_erro": 0.0
+      },
+      "validar_veiculo_para_revisao": {
+        "total": 5,
+        "erros": 0,
+        "taxa_erro": 0.0
+      },
+      "registrar_interesse": {
+        "total": 2,
+        "erros": 0,
+        "taxa_erro": 0.0
+      }
+    },
+    "chamadas_modelo": 0,
+    "custo_api_usd_por_execucao": 0,
+    "sli": 1.0,
+    "slo": 0.95,
+    "erros": 0,
+    "orcamento_consumido": 0.0
+  }
+]

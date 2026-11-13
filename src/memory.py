@@ -75,6 +75,14 @@ class MemoryStore:
             ).fetchall()
         return [dict(row) for row in rows]
 
+    def remember_vehicle_lookup(self, user_id: str, vehicle_id: int, attribute: str) -> dict[str, Any]:
+        """Única entrada episódica do grafo: referência tipada, sem texto externo."""
+        if type(vehicle_id) is not int or vehicle_id <= 0 or attribute not in {
+            "motor", "cambio", "combustivel", "potencia_cv", "torque_kgfm", "versoes"
+        }:
+            raise ValueError("Referência de consulta inválida")
+        return self.add_episode(user_id, f"Consulta veiculo:{vehicle_id} atributo:{attribute}")
+
     def add_episode(self, user_id: str, summary: str) -> dict[str, Any]:
         payload = {"user_id": user_id, "summary": summary}
         digest = content_key("episode", payload)

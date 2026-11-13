@@ -137,3 +137,24 @@ tests/                 13 testes automatizados
 - logs podem conter argumentos de demonstração e devem ser tratados conforme a política de retenção.
 
 Detalhes: `docs/io.md`, `docs/prompts.md`, `docs/arquitetura.md`, `docs/rag.md`, `docs/memoria.md`, `docs/grafo.md` e `docs/humano.md`.
+
+## Parte 3 — avaliar e observar o grafo da Parte 2
+
+A suíte da Parte 3 chama o mesmo fluxo de python -m src.main, não o
+protótipo comercial separado. Instale requirements.txt em Python 3.12.
+Use dados fictícios. Sem chave, as evidências declaram o modo local.
+
+    python -m evals.rodar --modo local --saida .runtime/rodada
+    python -m evals.comparar evals/resultados/parte3-anterior evals/resultados/parte3-nova
+    python -m pytest -q
+    python -m evals.metricas .runtime/rodada/traces.jsonl
+
+O JSONL de spans fica na pasta da rodada. Para execução isolada, configure
+LUXCAR_TRACE_FILE=.runtime/trace.jsonl no ambiente ou no .env e rode:
+
+    python -m src.main "Qual câmbio o Polo TSI 2018 possui?"
+
+Saída da rodada: “Segundo o cadastro, o Volkswagen Polo TSI 2018 tem
+câmbio: Automático de 6 velocidades.” Status answered, término completed,
+fonte veiculo:1. Veja [avaliação](docs/evals.md), [governança](docs/model-card.md),
+[segurança](docs/seguranca.md) e [observabilidade](docs/observabilidade.md).

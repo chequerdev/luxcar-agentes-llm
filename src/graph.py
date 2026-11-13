@@ -20,6 +20,8 @@ from .memory import MemoryStore
 from .prompt_loader import load_prompt, prompt_versions
 from .retrieval import find_vehicles, load_vehicles, normalize, search_corpus, vehicle_evidence
 from .state import LuxCarState
+from .telemetry import compact, safe, tool, tracer
+from opentelemetry import trace
 
 MEMORY = MemoryStore()
 TRIAGE_PROMPT, TRIAGE_VERSION = load_prompt("triage-v2.md")
@@ -42,6 +44,9 @@ def _fallback_triage(text: str) -> TriageDecision:
     normal = normalize(text)
     automotive = ("carro", "veiculo", "polo", "golf", "jetta", "a3", "civic", "luxcar", "marca", "modelo")
     if not any(term in normal for term in automotive):
+        if any(normalize(term) in normal.split() for term in ("câmbio", "motor", "combustível")):
+            return TriageDecision(route="clarify", missing=["modelo e ano"],
+                                  reason="Atributo automotivo sem veículo", confidence=0.9)
         return TriageDecision(route="out_of_scope", reason="Nenhum assunto automotivo identificado", confidence=0.98)
     if any(term in normal for term in ("como funciona", "politica", "privacidade", "tempo real", "aprova", "fonte")):
         return TriageDecision(route="document_query", attribute="politica", reason="Pergunta sobre política do LuxCar", confidence=0.92)
@@ -81,15 +86,22 @@ def _fallback_triage(text: str) -> TriageDecision:
 def _llm_triage(text: str) -> tuple[TriageDecision, dict[str, Any]]:
     if not USE_LLM or not API_KEY:
         return _fallback_triage(text), {"mode": "deterministic_fallback", "reason": "LLM desabilitado ou sem chave"}
-    client = OpenAI(api_key=API_KEY, base_url=BASE_URL, timeout=15.0)
+    client = OpenAI(api_key=API_KEY, base_url=BASE_URL, timeout=15.0, max_retries=0)
     schema = json.dumps(TriageDecision.model_json_schema(), ensure_ascii=False)
     try:
-        response = client.chat.completions.create(
-            model=MODEL, temperature=0, response_format={"type": "json_object"},
-            messages=[{"role": "system", "content": TRIAGE_PROMPT + "\nSchema:\n" + schema},
-                      {"role": "user", "content": text}],
-        )
-        decision = TriageDecision.model_validate_json(response.choices[0].message.content or "{}")
+        # Contrato: um objeto de triagem validado. Não autoriza escrita.
+        with tracer.start_as_current_span(f"chat {MODEL}", record_exception=False,
+                attributes={"gen_ai.operation.name": "chat", "gen_ai.request.model": MODEL,
+                            "gen_ai.provider.name": PROVIDER}) as span:
+            response = client.chat.completions.create(
+                model=MODEL, temperature=0, max_completion_tokens=512, response_format={"type": "json_object"},
+                messages=[{"role": "system", "content": TRIAGE_PROMPT + "\nSchema:\n" + schema},
+                          {"role": "user", "content": safe(text)}],
+            )
+            if response.usage:
+                span.set_attributes({"gen_ai.usage.input_tokens": response.usage.prompt_tokens,
+                                     "gen_ai.usage.output_tokens": response.usage.completion_tokens})
+            decision = TriageDecision.model_validate_json(response.choices[0].message.content or "{}")
         return decision, {"mode": "llm", "provider": PROVIDER, "model": MODEL, "prompt_version": TRIAGE_VERSION}
     except Exception as error:
         return _fallback_triage(text), {"mode": "deterministic_fallback", "reason": f"{type(error).__name__}: {error}"}
@@ -130,14 +142,18 @@ def route_after_triage(state: LuxCarState) -> str:
 
 def lookup_vehicle(state: LuxCarState) -> dict[str, Any]:
     decision = TriageDecision.model_validate(state["decision"])
-    matches = find_vehicles(decision.marca, decision.modelo, decision.ano, decision.versao)
-    evidence = [vehicle_evidence(vehicle).model_dump() for vehicle in matches]
+    with tool("buscar_veiculo", {k: getattr(decision, k) for k in ("marca", "modelo", "ano", "versao")}) as span:
+        matches = find_vehicles(decision.marca, decision.modelo, decision.ano, decision.versao)
+        evidence = [vehicle_evidence(vehicle).model_dump() for vehicle in matches]
+        span.set_attribute("gen_ai.tool.call.result", compact([item["source_id"] for item in evidence]))
     return {"steps": state["steps"] + 1, "sources": evidence, "tool_calls": ["buscar_veiculo"],
             "retrieval_calls": 1, "events": _event("structured_retrieval", matches=len(matches))}
 
 
 def retrieve_documents(state: LuxCarState) -> dict[str, Any]:
-    evidence = [item.model_dump() for item in search_corpus(state["input"]["text"])]
+    with tool("buscar_corpus_textual", {"top_k": 3}) as span:
+        evidence = [item.model_dump() for item in search_corpus(state["input"]["text"])]
+        span.set_attribute("gen_ai.tool.call.result", compact([item["source_id"] for item in evidence]))
     return {"steps": state["steps"] + 1, "sources": evidence, "tool_calls": ["buscar_corpus_textual"],
             "retrieval_calls": 1, "events": _event("text_retrieval", matches=len(evidence))}
 
@@ -188,6 +204,9 @@ def synthesize(state: LuxCarState) -> dict[str, Any]:
             return _output(state, result=f"A base não contém {decision.attribute} para esse veículo.",
                            sufficient=False, status="not_found", termination_reason="source_missing")
         value = vehicle[decision.attribute]
+        units = {"potencia_cv": "cv", "torque_kgfm": "kgfm"}
+        if decision.attribute in units:
+            value = f"{value} {units[decision.attribute]}"
         labels = {"cambio": "câmbio", "motor": "motor", "potencia_cv": "potência",
                   "torque_kgfm": "torque", "combustivel": "combustível"}
         label = labels[decision.attribute]
@@ -196,12 +215,24 @@ def synthesize(state: LuxCarState) -> dict[str, Any]:
     contradiction = decision.attribute == "cambio" and any(term in question for term in ("manual", "8 marchas", "8 velocidades"))
     prefix = "A premissa informada diverge da fonte. " if contradiction else ""
     result = prefix + f"Segundo o cadastro, o {identity} tem {label}: {value}."
-    MEMORY.add_episode(state["input"]["user_id"], f"Consultou {identity}: {label}={value}")
+    # Não promove texto de usuário, memória recuperada ou saída de modelo a memória.
+    # Os campos abaixo vêm exclusivamente do registro estruturado validado.
+    MEMORY.remember_vehicle_lookup(state["input"]["user_id"], vehicles[0]["id"], decision.attribute)
     return _output(state, result=result, sufficient=True, status="answered", termination_reason="completed")
 
 
 def prepare_action(state: LuxCarState) -> dict[str, Any]:
     text, decision = state["input"]["text"], state["decision"]
+    args = {k: decision.get(k) for k in ("marca", "modelo", "ano", "versao")}
+    if not args["modelo"] or not args["ano"]:
+        return _output(state, result="Informe modelo e ano para solicitar registro.",
+                       sufficient=False, status="clarification_needed", termination_reason="insufficient_input")
+    with tool("validar_veiculo_para_revisao", args) as span:
+        matches = find_vehicles(**args)
+        span.set_attribute("gen_ai.tool.call.result", compact([item["id"] for item in matches]))
+    if len(matches) != 1:
+        return _output(state, result="O pedido precisa identificar um único veículo do catálogo.",
+                       sufficient=False, status="not_found", termination_reason="source_missing")
     contact_match = re.search(r"(?:telefone|contato|whatsapp)\s*[:=]?\s*([+()\d\s-]{8,})", text, re.IGNORECASE)
     action = {"type": "registrar_interesse", "marca": decision.get("marca"), "modelo": decision.get("modelo"),
               "ano": decision.get("ano"), "versao": decision.get("versao"),
@@ -209,6 +240,10 @@ def prepare_action(state: LuxCarState) -> dict[str, Any]:
               "prepared_at": datetime.now(timezone.utc).isoformat()}
     return {"steps": state["steps"] + 1, "proposed_action": action,
             "events": _event("action_prepared", action=action)}
+
+
+def route_after_prepare(state: LuxCarState) -> str:
+    return "stop" if state.get("output") else "review"
 
 
 def human_approval(state: LuxCarState) -> dict[str, Any]:
@@ -221,6 +256,15 @@ def human_approval(state: LuxCarState) -> dict[str, Any]:
                "consequence": "Cria uma solicitação persistente para atendimento humano.",
                "accepted": ["approve", "reject", "edit"], "timeout_hours": HITL_TIMEOUT_HOURS}
     response = HumanDecision.model_validate(interrupt(payload))
+    if response.edits and (response.decision != "edit" or set(response.edits) != {"contact"}
+                           or not re.fullmatch(r"\d{10,11}", str(response.edits["contact"]))):
+        return {"steps": state["steps"] + 1, "action_result": {"approved": False},
+                "events": _event("invalid_review_edit")}
+    trace.get_current_span().add_event("luxcar.revisao", {
+        "revisor": safe(response.reviewer)[:64], "decisao": response.decision,
+        "objeto": compact({k: v for k, v in action.items() if k != "contact"}),
+        "edicoes": tuple(response.edits),
+    })
     if response.decision == "reject":
         return {"steps": state["steps"] + 1, "action_result": {"approved": False, "reviewer": response.reviewer},
                 "events": _event("human_rejected", reviewer=response.reviewer)}
@@ -236,7 +280,13 @@ def route_after_approval(state: LuxCarState) -> str:
 
 
 def write_action(state: LuxCarState) -> dict[str, Any]:
-    result = MEMORY.record_action(state["input"]["user_id"], state["proposed_action"])
+    if not state.get("action_result", {}).get("approved"):
+        return rejected(state)
+    public_action = {k: v for k, v in state["proposed_action"].items() if k != "contact"}
+    with tool("registrar_interesse", public_action) as span:
+        result = MEMORY.record_action(state["input"]["user_id"], state["proposed_action"])
+        span.set_attribute("gen_ai.tool.call.result", compact({
+            "idempotency_key": result["idempotency_key"], "ja_existia": result["ja_existia"]}))
     output = AgentOutput(result="Solicitação já existente; nenhuma duplicata foi criada." if result["ja_existia"] else "Solicitação de interesse registrada.",
                          sources=[SourceEvidence(source_id=result["idempotency_key"], source_type="tool",
                                                  location=".runtime/memory.sqlite#actions", excerpt="Resultado da escrita idempotente")],
@@ -272,7 +322,7 @@ builder.add_conditional_edges("triage", route_after_triage, {
     "out_of_scope": "refuse", "register_interest": "prepare_action"})
 builder.add_edge("lookup_vehicle", "synthesize")
 builder.add_edge("retrieve_documents", "synthesize")
-builder.add_edge("prepare_action", "human_approval")
+builder.add_conditional_edges("prepare_action", route_after_prepare, {"stop": END, "review": "human_approval"})
 builder.add_conditional_edges("human_approval", route_after_approval,
                               {"write": "write_action", "rejected": "rejected", "expired": "expired"})
 for terminal in ("clarify", "refuse", "synthesize", "write_action", "rejected", "expired"):

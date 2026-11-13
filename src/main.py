@@ -15,6 +15,8 @@ from langgraph.types import Command
 from src.config import MAX_STEPS, MODEL, RECURSION_LIMIT
 from src.contracts import AgentInput, AgentOutput, HumanDecision
 from src.graph import graph
+from src.telemetry import agent_span
+import os
 
 MAX_PASSOS = MAX_STEPS  # compatibilidade com a suíte histórica da Parte 1
 
@@ -29,9 +31,13 @@ def _pending_output(request: AgentInput, result: dict[str, Any]) -> AgentOutput:
     )
 
 
+@agent_span("iniciar")
 def run_agent(request: AgentInput | str, **identity: Any) -> AgentOutput:
     if isinstance(request, str):
         request = AgentInput(text=request, **identity)
+    if os.getenv("LUXCAR_SUSPENSO", "").lower() in {"1", "true"}:
+        return AgentOutput(result="Agente suspenso pelo operador.", sufficient=False, status="refused",
+                           termination_reason="out_of_scope", thread_id=request.thread_id)
     config = {"configurable": {"thread_id": request.thread_id}, "recursion_limit": RECURSION_LIMIT}
     result = graph.invoke({"input": request.model_dump(), "thread_id": request.thread_id}, config=config)
     if "__interrupt__" in result:
@@ -39,7 +45,11 @@ def run_agent(request: AgentInput | str, **identity: Any) -> AgentOutput:
     return AgentOutput.model_validate(result["output"])
 
 
+@agent_span("retomar")
 def resume_agent(thread_id: str, decision: HumanDecision | dict[str, Any]) -> AgentOutput:
+    if os.getenv("LUXCAR_SUSPENSO", "").lower() in {"1", "true"}:
+        return AgentOutput(result="Agente suspenso pelo operador.", sufficient=False, status="refused",
+                           termination_reason="out_of_scope", thread_id=thread_id)
     decision = HumanDecision.model_validate(decision)
     config = {"configurable": {"thread_id": thread_id}, "recursion_limit": RECURSION_LIMIT}
     result = graph.invoke(Command(resume=decision.model_dump()), config=config)

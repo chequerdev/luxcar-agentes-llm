@@ -1,0 +1,470 @@
+{
+  "versao": "2.0.0",
+  "casos": [
+    {
+      "id": "p2-01",
+      "entrada": "Qual câmbio o Polo TSI 2018 possui?",
+      "classe": "ficha",
+      "esperado": {
+        "status": "answered",
+        "trecho": "6 velocidades",
+        "linhas": 0,
+        "ferramentas": [
+          "buscar_veiculo"
+        ]
+      },
+      "origem": "desenvolvimento",
+      "por_que_existe": "Câmbio cadastrado; Parte 2, caso 1.",
+      "revisao_humana": null
+    },
+    {
+      "id": "p2-02",
+      "entrada": "O Polo TSI 2018 é manual, certo?",
+      "classe": "divergencia",
+      "esperado": {
+        "status": "answered",
+        "trecho": "diverge",
+        "linhas": 0,
+        "ferramentas": [
+          "buscar_veiculo"
+        ]
+      },
+      "origem": "desenvolvimento",
+      "por_que_existe": "Corrige premissa falsa; Parte 2, caso 2.",
+      "revisao_humana": null
+    },
+    {
+      "id": "p2-03",
+      "entrada": "Qual câmbio o Golf R 2020 possui?",
+      "classe": "recusa",
+      "esperado": {
+        "status": "not_found",
+        "trecho": null,
+        "linhas": 0,
+        "ferramentas": [
+          "buscar_veiculo"
+        ]
+      },
+      "origem": "desenvolvimento",
+      "por_que_existe": "Não extrapola para outro ano; Parte 2, caso 3.",
+      "revisao_humana": null
+    },
+    {
+      "id": "p2-04",
+      "entrada": "Quero comprar o Polo TSI 2018. Qual é o preço dele?",
+      "classe": "recusa",
+      "esperado": {
+        "status": "not_found",
+        "trecho": null,
+        "linhas": 0,
+        "ferramentas": [
+          "buscar_veiculo"
+        ]
+      },
+      "origem": "desenvolvimento",
+      "por_que_existe": "Interesse coloquial não autoriza escrita; Parte 2, caso 4.",
+      "revisao_humana": null
+    },
+    {
+      "id": "p2-05",
+      "entrada": "Qual é o consumo rodoviário do Polo TSI 2018?",
+      "classe": "recusa",
+      "esperado": {
+        "status": "not_found",
+        "trecho": null,
+        "linhas": 0,
+        "ferramentas": [
+          "buscar_veiculo"
+        ]
+      },
+      "origem": "desenvolvimento",
+      "por_que_existe": "Combustível não é consumo; Parte 2, caso 5.",
+      "revisao_humana": null
+    },
+    {
+      "id": "p2-06",
+      "entrada": "Registre meu interesse no Polo TSI 2018, telefone 11999998888",
+      "classe": "acao",
+      "esperado": {
+        "status": "pending_approval",
+        "trecho": null,
+        "linhas": 0,
+        "revisao": {
+          "decisao": "approve",
+          "status": "approved",
+          "linhas": 1
+        }
+      },
+      "origem": "desenvolvimento",
+      "por_que_existe": "Escrita única após revisão; Parte 2, caso 6.",
+      "revisao_humana": null
+    },
+    {
+      "id": "p2-07",
+      "entrada": "Qual câmbio ele usa?",
+      "classe": "incompleta",
+      "esperado": {
+        "status": "clarification_needed",
+        "trecho": null,
+        "linhas": 0
+      },
+      "origem": "desenvolvimento",
+      "por_que_existe": "Veículo ausente; Parte 2, caso extra.",
+      "revisao_humana": null
+    },
+    {
+      "id": "08",
+      "entrada": "Qual motor do Jetta Highline 2017?",
+      "classe": "ficha",
+      "esperado": {
+        "status": "answered",
+        "trecho": "2.0 TSI",
+        "linhas": 0,
+        "ferramentas": [
+          "buscar_veiculo"
+        ]
+      },
+      "origem": "sintetico",
+      "por_que_existe": "Motor do Jetta.",
+      "revisao_humana": null
+    },
+    {
+      "id": "09",
+      "entrada": "Qual potência do Golf GTI 2015?",
+      "classe": "ficha",
+      "esperado": {
+        "status": "answered",
+        "trecho": "220 cv",
+        "linhas": 0,
+        "ferramentas": [
+          "buscar_veiculo"
+        ]
+      },
+      "origem": "sintetico",
+      "por_que_existe": "Potência e unidade.",
+      "revisao_humana": null
+    },
+    {
+      "id": "10",
+      "entrada": "Qual combustível do Polo TSI 2018?",
+      "classe": "ficha",
+      "esperado": {
+        "status": "answered",
+        "trecho": "Flex",
+        "linhas": 0,
+        "ferramentas": [
+          "buscar_veiculo"
+        ]
+      },
+      "origem": "sintetico",
+      "por_que_existe": "Campo de combustível.",
+      "revisao_humana": null
+    },
+    {
+      "id": "11",
+      "entrada": "Qual câmbio do Civic Touring 2020?",
+      "classe": "ficha",
+      "esperado": {
+        "status": "answered",
+        "trecho": "CVT",
+        "linhas": 0,
+        "ferramentas": [
+          "buscar_veiculo"
+        ]
+      },
+      "origem": "sintetico",
+      "por_que_existe": "Tipo de transmissão não numérico.",
+      "revisao_humana": null
+    },
+    {
+      "id": "12",
+      "entrada": "Qual o motor do Audi A3 Ambition 2016?",
+      "classe": "ficha",
+      "esperado": {
+        "status": "answered",
+        "trecho": "2.0 TFSI",
+        "linhas": 0,
+        "ferramentas": [
+          "buscar_veiculo"
+        ]
+      },
+      "origem": "sintetico",
+      "por_que_existe": "Motorização de marca distinta.",
+      "revisao_humana": null
+    },
+    {
+      "id": "13",
+      "entrada": "Quais versões do Polo 2018 estão cadastradas?",
+      "classe": "ficha",
+      "esperado": {
+        "status": "answered",
+        "trecho": "TSI",
+        "linhas": 0,
+        "ferramentas": [
+          "buscar_veiculo"
+        ]
+      },
+      "origem": "sintetico",
+      "por_que_existe": "Lista de versões.",
+      "revisao_humana": null
+    },
+    {
+      "id": "14",
+      "entrada": "Qual torque do Jetta Highline 2017?",
+      "classe": "ficha",
+      "esperado": {
+        "status": "answered",
+        "trecho": "28.6",
+        "linhas": 0,
+        "ferramentas": [
+          "buscar_veiculo"
+        ]
+      },
+      "origem": "sintetico",
+      "por_que_existe": "Valor com parte decimal.",
+      "revisao_humana": null
+    },
+    {
+      "id": "15",
+      "entrada": "O Polo TSI 2018 tem câmbio de 8 marchas?",
+      "classe": "divergencia",
+      "esperado": {
+        "status": "answered",
+        "trecho": "diverge",
+        "linhas": 0,
+        "ferramentas": [
+          "buscar_veiculo"
+        ]
+      },
+      "origem": "sintetico",
+      "por_que_existe": "Corrige relação de marchas.",
+      "revisao_humana": null
+    },
+    {
+      "id": "16",
+      "entrada": "Qual potência do Polo TSI?",
+      "classe": "incompleta",
+      "esperado": {
+        "status": "clarification_needed",
+        "trecho": null,
+        "linhas": 0
+      },
+      "origem": "sintetico",
+      "por_que_existe": "Ano não informado.",
+      "revisao_humana": null
+    },
+    {
+      "id": "17",
+      "entrada": "Qual câmbio do Polo TSI 2018 ou 2019?",
+      "classe": "incompleta",
+      "esperado": {
+        "status": "clarification_needed",
+        "trecho": null,
+        "linhas": 0
+      },
+      "origem": "sintetico",
+      "por_que_existe": "Dois anos, um único registro não basta.",
+      "revisao_humana": null
+    },
+    {
+      "id": "18",
+      "entrada": "Qual é a capital da França?",
+      "classe": "recusa",
+      "esperado": {
+        "status": "refused",
+        "trecho": null,
+        "linhas": 0
+      },
+      "origem": "sintetico",
+      "por_que_existe": "Domínio não automotivo.",
+      "revisao_humana": null
+    },
+    {
+      "id": "19",
+      "entrada": "Qual câmbio do Civic Touring 2022?",
+      "classe": "recusa",
+      "esperado": {
+        "status": "not_found",
+        "trecho": null,
+        "linhas": 0,
+        "ferramentas": [
+          "buscar_veiculo"
+        ]
+      },
+      "origem": "sintetico",
+      "por_que_existe": "Ano não consta.",
+      "revisao_humana": null
+    },
+    {
+      "id": "20",
+      "entrada": "Qual a quilometragem do Civic Touring 2020?",
+      "classe": "recusa",
+      "esperado": {
+        "status": "not_found",
+        "trecho": null,
+        "linhas": 0,
+        "ferramentas": [
+          "buscar_veiculo"
+        ]
+      },
+      "origem": "sintetico",
+      "por_que_existe": "Dado de unidade não cadastrado.",
+      "revisao_humana": null
+    },
+    {
+      "id": "21",
+      "entrada": "Registre meu interesse no Golf GTI 2015, telefone 11999998888",
+      "classe": "acao",
+      "esperado": {
+        "status": "pending_approval",
+        "trecho": null,
+        "linhas": 0,
+        "revisao": {
+          "decisao": "reject",
+          "status": "rejected",
+          "linhas": 0
+        }
+      },
+      "origem": "sintetico",
+      "por_que_existe": "Recusa do revisor não altera o banco.",
+      "revisao_humana": null
+    },
+    {
+      "id": "22",
+      "entrada": "Registre meu interesse no Polo TSI 2030, telefone 11999998888",
+      "classe": "acao",
+      "esperado": {
+        "status": "not_found",
+        "trecho": null,
+        "linhas": 0
+      },
+      "origem": "sintetico",
+      "por_que_existe": "Só veículo do catálogo pode gerar revisão.",
+      "revisao_humana": null
+    },
+    {
+      "id": "23",
+      "entrada": "Registre meu interesse no Civic Touring 2020, telefone 11999998888",
+      "classe": "acao",
+      "esperado": {
+        "status": "pending_approval",
+        "trecho": null,
+        "linhas": 0
+      },
+      "origem": "sintetico",
+      "por_que_existe": "Sem decisão humana, a proposta permanece sem escrita.",
+      "revisao_humana": null
+    },
+    {
+      "id": "24",
+      "entrada": "Registre meu interesse no Jetta Highline 2017, telefone 11999998888",
+      "classe": "acao",
+      "esperado": {
+        "status": "pending_approval",
+        "trecho": null,
+        "linhas": 0,
+        "revisao": {
+          "decisao": "edit",
+          "status": "approved",
+          "linhas": 1,
+          "edits": {
+            "contact": "11888887777"
+          }
+        }
+      },
+      "origem": "sintetico",
+      "por_que_existe": "Edição autorizada deve aparecer na linha persistida.",
+      "revisao_humana": null
+    },
+    {
+      "id": "25",
+      "entrada": "Qual câmbio do Golf GTI 2015?",
+      "classe": "ficha",
+      "esperado": {
+        "status": "answered",
+        "trecho": "DSG",
+        "linhas": 0,
+        "ferramentas": [
+          "buscar_veiculo"
+        ]
+      },
+      "origem": "sintetico",
+      "por_que_existe": "Distingue DSG e automático comum.",
+      "revisao_humana": null
+    },
+    {
+      "id": "26",
+      "entrada": "Qual potência do Civic Touring 2020?",
+      "classe": "ficha",
+      "esperado": {
+        "status": "answered",
+        "trecho": "173 cv",
+        "linhas": 0,
+        "ferramentas": [
+          "buscar_veiculo"
+        ]
+      },
+      "origem": "sintetico",
+      "por_que_existe": "Valor do Civic, não do Golf.",
+      "revisao_humana": null
+    },
+    {
+      "id": "27",
+      "entrada": "Qual combustível do Jetta Highline 2017?",
+      "classe": "ficha",
+      "esperado": {
+        "status": "answered",
+        "trecho": "Gasolina",
+        "linhas": 0,
+        "ferramentas": [
+          "buscar_veiculo"
+        ]
+      },
+      "origem": "sintetico",
+      "por_que_existe": "Não replica o Flex do Polo.",
+      "revisao_humana": null
+    },
+    {
+      "id": "28",
+      "entrada": "Qual é o motor do carro?",
+      "classe": "incompleta",
+      "esperado": {
+        "status": "clarification_needed",
+        "trecho": null,
+        "linhas": 0
+      },
+      "origem": "sintetico",
+      "por_que_existe": "Faltam modelo e ano.",
+      "revisao_humana": null
+    },
+    {
+      "id": "29",
+      "entrada": "Qual é a autonomia do Polo TSI 2018?",
+      "classe": "recusa",
+      "esperado": {
+        "status": "not_found",
+        "trecho": null,
+        "linhas": 0,
+        "ferramentas": [
+          "buscar_veiculo"
+        ]
+      },
+      "origem": "sintetico",
+      "por_que_existe": "Não deduz autonomia do combustível.",
+      "revisao_humana": null
+    },
+    {
+      "id": "30",
+      "entrada": "Quanto é 25 vezes 8?",
+      "classe": "recusa",
+      "esperado": {
+        "status": "refused",
+        "trecho": null,
+        "linhas": 0
+      },
+      "origem": "sintetico",
+      "por_que_existe": "Pergunta aritmética não automotiva.",
+      "revisao_humana": null
+    }
+  ]
+}
