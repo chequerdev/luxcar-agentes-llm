@@ -5,6 +5,7 @@ import hashlib
 import json
 import re
 import sqlite3
+from contextlib import closing, contextmanager
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
@@ -32,8 +33,14 @@ class MemoryStore:
         connection.row_factory = sqlite3.Row
         return connection
 
+    @contextmanager
+    def session(self):
+        """Conclui a transação antes de fechar o arquivo SQLite."""
+        with closing(self.connect()) as connection, connection:
+            yield connection
+
     def _setup(self) -> None:
-        with self.connect() as connection:
+        with self.session() as connection:
             connection.executescript("""
                 CREATE TABLE IF NOT EXISTS semantic_memory (
                     user_id TEXT NOT NULL, key TEXT NOT NULL, value TEXT NOT NULL,
@@ -53,7 +60,7 @@ class MemoryStore:
     def put_fact(self, user_id: str, key: str, value: str) -> dict[str, Any]:
         payload = {"user_id": user_id, "key": key, "value": value}
         digest = content_key("semantic", payload)
-        with self.connect() as connection:
+        with self.session() as connection:
             previous = connection.execute(
                 "SELECT content_hash FROM semantic_memory WHERE user_id=? AND key=?", (user_id, key)
             ).fetchone()
@@ -68,7 +75,7 @@ class MemoryStore:
         return {"key": digest, "ja_existia": existed}
 
     def get_facts(self, user_id: str) -> list[dict[str, Any]]:
-        with self.connect() as connection:
+        with self.session() as connection:
             rows = connection.execute(
                 "SELECT key,value,updated_at FROM semantic_memory WHERE user_id=? ORDER BY updated_at DESC",
                 (user_id,),
@@ -86,7 +93,7 @@ class MemoryStore:
     def add_episode(self, user_id: str, summary: str) -> dict[str, Any]:
         payload = {"user_id": user_id, "summary": summary}
         digest = content_key("episode", payload)
-        with self.connect() as connection:
+        with self.session() as connection:
             cursor = connection.execute(
                 "INSERT OR IGNORE INTO episodic_memory VALUES (?, ?, ?, ?)",
                 (digest, user_id, summary, utc_now()),
@@ -95,7 +102,7 @@ class MemoryStore:
 
     def similar_episodes(self, user_id: str, query: str, limit: int = 3) -> list[dict[str, Any]]:
         query_tokens = set(re.findall(r"\w+", query.lower()))
-        with self.connect() as connection:
+        with self.session() as connection:
             rows = connection.execute(
                 "SELECT summary,created_at FROM episodic_memory WHERE user_id=?", (user_id,)
             ).fetchall()
@@ -114,7 +121,7 @@ class MemoryStore:
             if key not in {"reviewer", "reviewed_at", "prepared_at"}
         }
         digest = content_key("action", {"user_id": user_id, **stable_payload})
-        with self.connect() as connection:
+        with self.session() as connection:
             cursor = connection.execute(
                 "INSERT OR IGNORE INTO actions VALUES (?, ?, ?, ?)",
                 (digest, user_id, json.dumps(payload, ensure_ascii=False, sort_keys=True), utc_now()),
@@ -122,7 +129,7 @@ class MemoryStore:
         return {"idempotency_key": digest, "ja_existia": cursor.rowcount == 0, "payload": payload}
 
     def count_action(self, idempotency_key: str) -> int:
-        with self.connect() as connection:
+        with self.session() as connection:
             row = connection.execute(
                 "SELECT COUNT(*) AS total FROM actions WHERE idempotency_key=?", (idempotency_key,)
             ).fetchone()
@@ -130,7 +137,7 @@ class MemoryStore:
 
     def forget_user(self, user_id: str) -> dict[str, int]:
         removed: dict[str, int] = {}
-        with self.connect() as connection:
+        with self.session() as connection:
             for table in ("semantic_memory", "episodic_memory", "actions"):
                 cursor = connection.execute(f"DELETE FROM {table} WHERE user_id=?", (user_id,))
                 removed[table] = cursor.rowcount
@@ -152,7 +159,7 @@ class MemoryStore:
         report: dict[str, Any] = {"memory": self.forget_user(user_id)}
         checkpoint_rows: dict[str, int] = {}
         if checkpoint_db.exists():
-            with sqlite3.connect(checkpoint_db) as connection:
+            with closing(sqlite3.connect(checkpoint_db)) as connection, connection:
                 tables = connection.execute(
                     "SELECT name FROM sqlite_master WHERE type='table'"
                 ).fetchall()

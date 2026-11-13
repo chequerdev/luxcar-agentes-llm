@@ -334,3 +334,8 @@ _checkpointer = SqliteSaver(_checkpoint_connection)
 _checkpointer.setup()
 graph = builder.compile(checkpointer=_checkpointer)
 
+
+
+def close_checkpoint() -> None:
+    """Encerra o checkpointer quando o processo que o usa termina a rodada."""
+    _checkpoint_connection.close()

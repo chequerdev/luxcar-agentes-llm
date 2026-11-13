@@ -1,5 +1,6 @@
 """Roda o ponto de entrada do README com bancos descartáveis e registra os resultados."""
 from collections import defaultdict
+from contextlib import ExitStack
 from datetime import datetime, timezone
 from hashlib import sha256
 import argparse
@@ -22,7 +23,7 @@ def fingerprint():
 
 
 def actions(memory, user):
-    with memory.connect() as conn:
+    with memory.session() as conn:
         return [json.loads(row["payload"]) for row in conn.execute(
             "SELECT payload FROM actions WHERE user_id=?", (user,))]
 
@@ -31,11 +32,12 @@ def run(directory, mode):
     data = json.loads(DATASET.read_text(encoding="utf-8"))
     directory.mkdir(parents=True, exist_ok=False)
     results = []
-    with tempfile.TemporaryDirectory() as tmp:
+    with tempfile.TemporaryDirectory() as tmp, ExitStack() as resources:
         os.environ.update(LUXCAR_CHECKPOINT_DB=f"{tmp}/checkpoint.db",
                           LUXCAR_MEMORY_DB=f"{tmp}/memory.db", LUXCAR_TRACE_FILE=str(directory / "traces.jsonl"), LUXCAR_USE_LLM="0" if mode == "local" else "1")
         from src.config import API_KEY
-        from src.graph import MEMORY, graph
+        from src.graph import MEMORY, close_checkpoint, graph
+        resources.callback(close_checkpoint)
         from src.main import run_agent, resume_agent
         if mode == "llm" and not API_KEY:
             raise ValueError("Modo llm exige chave de um provedor configurado no README.")
