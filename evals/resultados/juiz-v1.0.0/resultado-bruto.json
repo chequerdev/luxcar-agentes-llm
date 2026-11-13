@@ -1,0 +1,317 @@
+{
+  "rubrica": "1.0.0",
+  "modelo": "openai/gpt-oss-20b",
+  "n": 30,
+  "limiar": 0.9,
+  "matriz": {
+    "humano_0_juiz_0": 1,
+    "humano_0_juiz_1": 1,
+    "humano_1_juiz_0": 7,
+    "humano_1_juiz_1": 21
+  },
+  "concordancia": 0.7333333333333333,
+  "adotado": false,
+  "decisao": "revisar_desacordos_e_falsos_positivos",
+  "casos": [
+    {
+      "id": "p2-01",
+      "humano": 1,
+      "juiz": 1,
+      "nota_juiz": "Resposta direta ao pedido sem instruções adicionais.",
+      "nota_humana": "Responde corretamente",
+      "revisor": "Gabriel",
+      "status_original": "answered",
+      "classificacao_desacordo": null
+    },
+    {
+      "id": "p2-02",
+      "humano": 1,
+      "juiz": 1,
+      "nota_juiz": "Resposta direta sem instrução contraditória.",
+      "nota_humana": "Responde corretamente",
+      "revisor": "Gabriel",
+      "status_original": "answered",
+      "classificacao_desacordo": null
+    },
+    {
+      "id": "p2-03",
+      "humano": 1,
+      "juiz": 1,
+      "nota_juiz": "Indica que pode consultar os dados cadastrados no LuxCar.",
+      "nota_humana": "Explicou que não encontrou uma fonte vigente para o Golf R 2020 e deixou claro o limite da consulta.",
+      "revisor": "Gabriel",
+      "status_original": "not_found",
+      "classificacao_desacordo": null
+    },
+    {
+      "id": "p2-04",
+      "humano": 1,
+      "juiz": 0,
+      "nota_juiz": "Não fornece instrução de próximo passo.",
+      "nota_humana": "Explicou que a base não possui o atributo pedido e deixa claro que não consegue fazer esta consulta",
+      "revisor": "Gabriel",
+      "status_original": "not_found",
+      "classificacao_desacordo": "pendente"
+    },
+    {
+      "id": "p2-05",
+      "humano": 1,
+      "juiz": 0,
+      "nota_juiz": "Não fornece próximo passo ou razão clara para não ter próximo passo.",
+      "nota_humana": "Explicou que não tem na base o atributo pedido para consulta",
+      "revisor": "Gabriel",
+      "status_original": "not_found",
+      "classificacao_desacordo": "pendente"
+    },
+    {
+      "id": "p2-06",
+      "humano": 1,
+      "juiz": 1,
+      "nota_juiz": "The response indicates the process is paused and awaiting human review.",
+      "nota_humana": "Explicou a condição da tratativa",
+      "revisor": "Gabriel",
+      "status_original": "pending_approval",
+      "classificacao_desacordo": null
+    },
+    {
+      "id": "p2-07",
+      "humano": 1,
+      "juiz": 1,
+      "nota_juiz": "Solicita modelo e ano para responder.",
+      "nota_humana": "Explicou a condição da tratativa",
+      "revisor": "Gabriel",
+      "status_original": "clarification_needed",
+      "classificacao_desacordo": null
+    },
+    {
+      "id": "08",
+      "humano": 1,
+      "juiz": 1,
+      "nota_juiz": "Resposta direta ao pedido.",
+      "nota_humana": "Responde corretamente",
+      "revisor": "Gabriel",
+      "status_original": "answered",
+      "classificacao_desacordo": null
+    },
+    {
+      "id": "09",
+      "humano": 1,
+      "juiz": 1,
+      "nota_juiz": "Resposta direta e completa.",
+      "nota_humana": "Responde corretamente",
+      "revisor": "Gabriel",
+      "status_original": "answered",
+      "classificacao_desacordo": null
+    },
+    {
+      "id": "10",
+      "humano": 1,
+      "juiz": 1,
+      "nota_juiz": "Resposta direta ao pedido.",
+      "nota_humana": "Responde corretamente",
+      "revisor": "Gabriel",
+      "status_original": "answered",
+      "classificacao_desacordo": null
+    },
+    {
+      "id": "11",
+      "humano": 1,
+      "juiz": 1,
+      "nota_juiz": "Resposta direta ao pedido sem instruções adicionais.",
+      "nota_humana": "Resposta correta em relação a solicitação",
+      "revisor": "Anderson",
+      "status_original": "answered",
+      "classificacao_desacordo": null
+    },
+    {
+      "id": "12",
+      "humano": 1,
+      "juiz": 1,
+      "nota_juiz": "Resposta direta ao motor do Audi A3 Ambition 2016.",
+      "nota_humana": "Resposta correta em relação a solicitação",
+      "revisor": "Anderson",
+      "status_original": "answered",
+      "classificacao_desacordo": null
+    },
+    {
+      "id": "13",
+      "humano": 1,
+      "juiz": 1,
+      "nota_juiz": "Resposta direta sem instruções adicionais.",
+      "nota_humana": "resposta está certa consultou o banco de dados",
+      "revisor": "Anderson",
+      "status_original": "answered",
+      "classificacao_desacordo": null
+    },
+    {
+      "id": "14",
+      "humano": 1,
+      "juiz": 1,
+      "nota_juiz": "Resposta direta ao torque solicitado.",
+      "nota_humana": "resposta consultou certo a informação do manual",
+      "revisor": "Anderson",
+      "status_original": "answered",
+      "classificacao_desacordo": null
+    },
+    {
+      "id": "15",
+      "humano": 1,
+      "juiz": 1,
+      "nota_juiz": "Resposta direta sem instrução contraditória.",
+      "nota_humana": "Explicou a diferença dos cambios e qual seria o correto",
+      "revisor": "Anderson",
+      "status_original": "answered",
+      "classificacao_desacordo": null
+    },
+    {
+      "id": "16",
+      "humano": 1,
+      "juiz": 1,
+      "nota_juiz": "Fornece próximo passo claro solicitando o ano.",
+      "nota_humana": "Solicitou mais informações para dar a potencia correta",
+      "revisor": "Anderson",
+      "status_original": "clarification_needed",
+      "classificacao_desacordo": null
+    },
+    {
+      "id": "17",
+      "humano": 0,
+      "juiz": 1,
+      "nota_juiz": "Solicita um único ano para responder sem adivinhar.",
+      "nota_humana": "Errou por conta que o cambio de ambos os anos são iguais",
+      "revisor": "Anderson",
+      "status_original": "clarification_needed",
+      "classificacao_desacordo": "pendente"
+    },
+    {
+      "id": "18",
+      "humano": 1,
+      "juiz": 0,
+      "nota_juiz": "Não há próximo passo indicado.",
+      "nota_humana": "Refutou o usuario com uma pergunta aleatorio",
+      "revisor": "Anderson",
+      "status_original": "refused",
+      "classificacao_desacordo": "pendente"
+    },
+    {
+      "id": "19",
+      "humano": 1,
+      "juiz": 0,
+      "nota_juiz": "Não fornece instrução clara de próximo passo.",
+      "nota_humana": "Disse que não teria a informação correta ao inves de inventar",
+      "revisor": "Anderson",
+      "status_original": "not_found",
+      "classificacao_desacordo": "pendente"
+    },
+    {
+      "id": "20",
+      "humano": 1,
+      "juiz": 0,
+      "nota_juiz": "Não indica próximo passo nem orienta o usuário.",
+      "nota_humana": "Explicou que não tem na base o atributo pedido para consulta",
+      "revisor": "Gabriel",
+      "status_original": "not_found",
+      "classificacao_desacordo": "pendente"
+    },
+    {
+      "id": "21",
+      "humano": 1,
+      "juiz": 1,
+      "nota_juiz": "Indicates that the request is paused and awaiting human review.",
+      "nota_humana": "Explicou a condição da tratativa",
+      "revisor": "Gabriel",
+      "status_original": "pending_approval",
+      "classificacao_desacordo": null
+    },
+    {
+      "id": "22",
+      "humano": 0,
+      "juiz": 0,
+      "nota_juiz": "Não indica próximo passo claro.",
+      "nota_humana": "Explicou que não localizou veiculo com esses atributos",
+      "revisor": "Gabriel",
+      "status_original": "not_found",
+      "classificacao_desacordo": null
+    },
+    {
+      "id": "23",
+      "humano": 1,
+      "juiz": 1,
+      "nota_juiz": "The response indicates the process is paused and awaiting human review.",
+      "nota_humana": "Explicou a condição da tratativa",
+      "revisor": "Gabriel",
+      "status_original": "pending_approval",
+      "classificacao_desacordo": null
+    },
+    {
+      "id": "24",
+      "humano": 1,
+      "juiz": 1,
+      "nota_juiz": "Indica que a execução está pausada e aguardando revisão humana.",
+      "nota_humana": "Explicou a condição da tratativa",
+      "revisor": "Gabriel",
+      "status_original": "pending_approval",
+      "classificacao_desacordo": null
+    },
+    {
+      "id": "25",
+      "humano": 1,
+      "juiz": 1,
+      "nota_juiz": "Resposta direta ao pedido sem instruções adicionais.",
+      "nota_humana": "Responde corretamente",
+      "revisor": "Gabriel",
+      "status_original": "answered",
+      "classificacao_desacordo": null
+    },
+    {
+      "id": "26",
+      "humano": 1,
+      "juiz": 1,
+      "nota_juiz": "Resposta direta sem instrução adicional.",
+      "nota_humana": "Responde corretamente",
+      "revisor": "Gabriel",
+      "status_original": "answered",
+      "classificacao_desacordo": null
+    },
+    {
+      "id": "27",
+      "humano": 1,
+      "juiz": 1,
+      "nota_juiz": "Resposta direta sem instruções adicionais.",
+      "nota_humana": "Responde corretamente",
+      "revisor": "Gabriel",
+      "status_original": "answered",
+      "classificacao_desacordo": null
+    },
+    {
+      "id": "28",
+      "humano": 1,
+      "juiz": 1,
+      "nota_juiz": "Solicita dados adicionais para responder.",
+      "nota_humana": "Responde corretamente",
+      "revisor": "Gabriel",
+      "status_original": "clarification_needed",
+      "classificacao_desacordo": null
+    },
+    {
+      "id": "29",
+      "humano": 1,
+      "juiz": 0,
+      "nota_juiz": "Não há próximo passo, pois a base não possui o atributo solicitado.",
+      "nota_humana": "Explicou que não tem na base o atributo pedido para consulta",
+      "revisor": "Gabriel",
+      "status_original": "not_found",
+      "classificacao_desacordo": "pendente"
+    },
+    {
+      "id": "30",
+      "humano": 1,
+      "juiz": 0,
+      "nota_juiz": "Não fornece instrução de próximo passo.",
+      "nota_humana": "Explicou que a solicitação está fora do escopo",
+      "revisor": "Gabriel",
+      "status_original": "refused",
+      "classificacao_desacordo": "pendente"
+    }
+  ]
+}

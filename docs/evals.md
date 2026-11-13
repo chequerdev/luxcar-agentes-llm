@@ -23,11 +23,13 @@ sem unidade e pergunta de câmbio sem identificação. Não são números de LLM
 
 ## Juiz
 
-A [rubrica](../evals/juiz/rubrica-v1.0.0.md) fixa limiar de 90% antes da
-medição. O [CSV](../evals/juiz/rotulos-a-preencher.csv) contém saídas reais,
-sem rótulos atribuídos. Os integrantes devem registrar rótulo binário, nome
-e uma justificativa por saída. **LACUNA:** faltam 20 rótulos humanos,
-execução do juiz com chave, matriz e classificação dos desacordos. Não
-há concordância reportada, e o juiz não foi adotado.
+A [rubrica](../evals/juiz/rubrica-v1.0.0.md) fixou o limiar de 90%
+antes da medição. O GPT-OSS 20B na Groq foi comparado com 30 avaliações
+humanas, todas com justificativa. Houve **22/30 acordos (73,3%)**, abaixo
+do limiar. O juiz **não foi adotado** e não altera a nota das duas rodadas
+funcionais. A [matriz e a análise dos oito desacordos](../evals/resultados/juiz-v1.0.0/analise.md)
+estão junto do [resultado bruto](../evals/resultados/juiz-v1.0.0/resultado-bruto.json)
+e dos [rótulos](../evals/resultados/juiz-v1.0.0/rotulos-humanos.csv).
+A validação remota do juiz não substitui a medição do agente em modo remoto.
 
     python -m evals.validar_juiz medir ROTULOS_REVISADOS.csv resultado-juiz.json

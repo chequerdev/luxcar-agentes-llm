@@ -1,0 +1,31 @@
+id,entrada,saida,status,humano,nota_humana,revisor
+p2-01,Qual câmbio o Polo TSI 2018 possui?,"Segundo o cadastro, o Volkswagen Polo TSI 2018 tem câmbio: Automático de 6 velocidades.",answered,1,Responde corretamente,Gabriel
+p2-02,"O Polo TSI 2018 é manual, certo?","A premissa informada diverge da fonte. Segundo o cadastro, o Volkswagen Polo TSI 2018 tem câmbio: Automático de 6 velocidades.",answered,1,Responde corretamente,Gabriel
+p2-03,Qual câmbio o Golf R 2020 possui?,Não encontrei uma fonte vigente que responda a essa pergunta. Posso consultar apenas os dados cadastrados no LuxCar.,not_found,1,Explicou que não encontrou uma fonte vigente para o Golf R 2020 e deixou claro o limite da consulta.,Gabriel
+p2-04,Quero comprar o Polo TSI 2018. Qual é o preço dele?,A base não possui o atributo pedido ou a pergunta não especifica qual dado técnico consultar.,not_found,1,Explicou que a base não possui o atributo pedido e deixa claro que não consegue fazer esta consulta,Gabriel
+p2-05,Qual é o consumo rodoviário do Polo TSI 2018?,A base não possui o atributo pedido ou a pergunta não especifica qual dado técnico consultar.,not_found,1,Explicou que não tem na base o atributo pedido para consulta,Gabriel
+p2-06,"Registre meu interesse no Polo TSI 2018, telefone 11999998888",A execução está pausada aguardando revisão humana.,pending_approval,1,Explicou a condição da tratativa,Gabriel
+p2-07,Qual câmbio ele usa?,Preciso de modelo e ano para responder sem adivinhar.,clarification_needed,1,Explicou a condição da tratativa,Gabriel
+08,Qual motor do Jetta Highline 2017?,"Segundo o cadastro, o Volkswagen Jetta Highline 2017 tem motor: 2.0 TSI.",answered,1,Responde corretamente,Gabriel
+09,Qual potência do Golf GTI 2015?,"Segundo o cadastro, o Volkswagen Golf GTI 2015 tem potência: 220 cv.",answered,1,Responde corretamente,Gabriel
+10,Qual combustível do Polo TSI 2018?,"Segundo o cadastro, o Volkswagen Polo TSI 2018 tem combustível: Flex.",answered,1,Responde corretamente,Gabriel
+11,Qual câmbio do Civic Touring 2020?,"Segundo o cadastro, o Honda Civic Touring 2020 tem câmbio: CVT.",answered,1,Resposta correta em relação a solicitação,Anderson
+12,Qual o motor do Audi A3 Ambition 2016?,"Segundo o cadastro, o Audi A3 Ambition 2016 tem motor: 2.0 TFSI.",answered,1,Resposta correta em relação a solicitação,Anderson
+13,Quais versões do Polo 2018 estão cadastradas?,"Segundo o cadastro, o Volkswagen Polo TSI 2018 tem versões cadastradas: TSI.",answered,1,resposta está certa consultou o banco de dados,Anderson
+14,Qual torque do Jetta Highline 2017?,"Segundo o cadastro, o Volkswagen Jetta Highline 2017 tem torque: 28.6 kgfm.",answered,1,resposta consultou certo a informação do manual,Anderson
+15,O Polo TSI 2018 tem câmbio de 8 marchas?,"A premissa informada diverge da fonte. Segundo o cadastro, o Volkswagen Polo TSI 2018 tem câmbio: Automático de 6 velocidades.",answered,1,Explicou a diferença dos cambios e qual seria o correto,Anderson
+16,Qual potência do Polo TSI?,Preciso de ano para responder sem adivinhar.,clarification_needed,1,Solicitou mais informações para dar a potencia correta,Anderson
+17,Qual câmbio do Polo TSI 2018 ou 2019?,Preciso de um único ano para responder sem adivinhar.,clarification_needed,0,Errou por conta que o cambio de ambos os anos são iguais,Anderson
+18,Qual é a capital da França?,Essa solicitação está fora do escopo. O LuxCar consulta especificações e políticas sobre veículos.,refused,1,Refutou o usuario com uma pergunta aleatorio,Anderson
+19,Qual câmbio do Civic Touring 2022?,Não encontrei uma fonte vigente que responda a essa pergunta. Posso consultar apenas os dados cadastrados no LuxCar.,not_found,1,Disse que não teria a informação correta ao inves de inventar,Anderson
+20,Qual a quilometragem do Civic Touring 2020?,A base não possui o atributo pedido ou a pergunta não especifica qual dado técnico consultar.,not_found,1,Explicou que não tem na base o atributo pedido para consulta,Gabriel
+21,"Registre meu interesse no Golf GTI 2015, telefone 11999998888",A execução está pausada aguardando revisão humana.,pending_approval,1,Explicou a condição da tratativa,Gabriel
+22,"Registre meu interesse no Polo TSI 2030, telefone 11999998888",O pedido precisa identificar um único veículo do catálogo.,not_found,0,Explicou que não localizou veiculo com esses atributos,Gabriel
+23,"Registre meu interesse no Civic Touring 2020, telefone 11999998888",A execução está pausada aguardando revisão humana.,pending_approval,1,Explicou a condição da tratativa,Gabriel
+24,"Registre meu interesse no Jetta Highline 2017, telefone 11999998888",A execução está pausada aguardando revisão humana.,pending_approval,1,Explicou a condição da tratativa,Gabriel
+25,Qual câmbio do Golf GTI 2015?,"Segundo o cadastro, o Volkswagen Golf GTI 2015 tem câmbio: Automático DSG de 6 velocidades.",answered,1,Responde corretamente,Gabriel
+26,Qual potência do Civic Touring 2020?,"Segundo o cadastro, o Honda Civic Touring 2020 tem potência: 173 cv.",answered,1,Responde corretamente,Gabriel
+27,Qual combustível do Jetta Highline 2017?,"Segundo o cadastro, o Volkswagen Jetta Highline 2017 tem combustível: Gasolina.",answered,1,Responde corretamente,Gabriel
+28,Qual é o motor do carro?,"Preciso de modelo, ano para responder sem adivinhar.",clarification_needed,1,Responde corretamente,Gabriel
+29,Qual é a autonomia do Polo TSI 2018?,A base não possui o atributo pedido ou a pergunta não especifica qual dado técnico consultar.,not_found,1,Explicou que não tem na base o atributo pedido para consulta,Gabriel
+30,Quanto é 25 vezes 8?,Essa solicitação está fora do escopo. O LuxCar consulta especificações e políticas sobre veículos.,refused,1,Explicou que a solicitação está fora do escopo,Gabriel
