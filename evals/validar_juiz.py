@@ -2,6 +2,10 @@
 import argparse
 import csv
 import json
+import math
+import re
+import time
+from hashlib import sha256
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -25,6 +29,40 @@ def prepare(round_dir, labels):
                                  "saida": row["inicial"]["result"], "status": row["inicial"]["status"]})
 
 
+def request_verdict(client, model, rubric, row, *, sleep=time.sleep):
+    from openai import RateLimitError
+
+    for attempt in range(7):
+        try:
+            return client.chat.completions.create(
+                model=model, temperature=0, max_completion_tokens=512, response_format={"type": "json_object"},
+                messages=[{"role": "system", "content": rubric},
+                          {"role": "user", "content": json.dumps(
+                              {k: row[k] for k in ("entrada", "saida")}, ensure_ascii=False)}])
+        except RateLimitError as err:
+            if attempt == 6:
+                raise ValueError("A Groq ainda está limitando chamadas. Rode o mesmo comando depois para retomar.") from None
+            raw = err.response.headers.get("retry-after")
+            match = re.search(r"try again in (?:([0-9.]+)m)?\s*([0-9.]+)s", str(err), re.I)
+            try:
+                delay = float(raw) if raw else 0
+            except ValueError:
+                delay = 0
+            if not math.isfinite(delay) or delay <= 0:
+                delay = (60 * float(match[1] or 0) + float(match[2])) if match else 0
+            if delay > 90:
+                raise ValueError("A API pediu uma espera maior que 90 segundos. Rode o mesmo comando mais tarde.") from None
+            delay = max(delay + 1, min(60, 5 * 2 ** attempt))
+            print(f"Limite da API no caso {row['id']}. Aguardando {delay:.1f}s para tentar de novo.", flush=True)
+            sleep(delay)
+
+
+def atomic_json(path, value):
+    temp = path.with_name(path.name + ".tmp")
+    temp.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    temp.replace(path)
+
+
 def measure(labels, output):
     with labels.open(encoding="utf-8-sig", newline="") as f:
         rows = [r for r in csv.DictReader(f) if r["humano"] in {"0", "1"} and
@@ -39,27 +77,42 @@ def measure(labels, output):
     if not API_KEY:
         raise ValueError("Configure a chave no .env para chamar o juiz.")
     matrix = {f"humano_{h}_juiz_{j}": 0 for h in (0, 1) for j in (0, 1)}
+    rubric = RUBRIC.read_text(encoding="utf-8")
+    signature = sha256(json.dumps([rows, rubric, MODEL, BASE_URL, 0, 512],
+                                  ensure_ascii=False, sort_keys=True).encode()).hexdigest()
+    partial = output.with_name(output.name + ".parcial")
+    output.parent.mkdir(parents=True, exist_ok=True)
     evidence = []
+    if partial.exists():
+        checkpoint = json.loads(partial.read_text(encoding="utf-8"))
+        if checkpoint.get("assinatura") != signature:
+            raise ValueError("A rodada parcial é de outra configuração. Use um nome de saída novo.")
+        evidence = checkpoint["casos"]
+        if [item["id"] for item in evidence] != [row["id"] for row in rows[:len(evidence)]]:
+            raise ValueError("A rodada parcial não corresponde à ordem do CSV.")
+        print(f"Retomando: {len(evidence)}/{len(rows)} casos já salvos.", flush=True)
     with OpenAI(api_key=API_KEY, base_url=BASE_URL, timeout=20, max_retries=0) as client:
-        for row in rows:
-            res = client.chat.completions.create(
-                model=MODEL, temperature=0, max_completion_tokens=512, response_format={"type": "json_object"},
-                messages=[{"role": "system", "content": RUBRIC.read_text(encoding="utf-8")},
-                          {"role": "user", "content": json.dumps({k: row[k] for k in ("entrada", "saida")}, ensure_ascii=False)}])
+        for index, row in enumerate(rows[len(evidence):], start=len(evidence) + 1):
+            res = request_verdict(client, MODEL, rubric, row)
             verdict = json.loads(res.choices[0].message.content or "{}")
             if type(verdict.get("util")) is not bool or not isinstance(verdict.get("nota"), str):
                 raise ValueError(f"Resposta inválida do juiz: {row['id']}")
             h, j = int(row["humano"]), int(verdict["util"])
-            matrix[f"humano_{h}_juiz_{j}"] += 1
             evidence.append({"id": row["id"], "humano": h, "juiz": j, "nota_juiz": verdict["nota"],
                              "nota_humana": row["nota_humana"], "revisor": row["revisor"],
                              "status_original": row["status"],
                              "classificacao_desacordo": "pendente" if h != j else None})
+            atomic_json(partial, {"assinatura": signature, "casos": evidence})
+            print(f"{index}/{len(rows)} — caso {row['id']} avaliado.", flush=True)
+    for item in evidence:
+        matrix[f"humano_{item['humano']}_juiz_{item['juiz']}"] += 1
     agreement = (matrix["humano_0_juiz_0"] + matrix["humano_1_juiz_1"]) / len(rows)
     report = {"rubrica": "1.0.0", "modelo": MODEL, "n": len(rows), "limiar": THRESHOLD, "matriz": matrix,
               "concordancia": agreement, "adotado": False, "decisao": "revisar_desacordos_e_falsos_positivos",
               "casos": evidence}
-    output.write_text(json.dumps(report, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    atomic_json(output, report)
+    partial.unlink(missing_ok=True)
+    print(f"Resultado salvo em {output}", flush=True)
 
 
 def main():
