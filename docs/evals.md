@@ -4,7 +4,7 @@ A suíte chama as mesmas funções run_agent e resume_agent usadas por
 python -m src.main, com SQLite descartável. O [conjunto 2.0.0](../evals/golden_dataset_v2.0.0.json)
 tem 30 casos em cinco classes, 7 de desenvolvimento (todos os cenários da
 Parte 2) e 23 sintéticos, incluindo recusas. Não há dados de produção.
-**LACUNA:** os integrantes ainda precisam revisar e assinar os casos sintéticos.
+Os [23 casos sintéticos](revisao-sinteticos.md) foram revisados e aprovados pelo grupo sem alteração de gabarito.
 
 | Propriedade | Nível | Como se confere | Por que não um nível mais barato |
 |---|---|---|---|

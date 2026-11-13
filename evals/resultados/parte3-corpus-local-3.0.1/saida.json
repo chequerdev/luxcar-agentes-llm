@@ -1,0 +1,38 @@
+{
+  "result": "Privacidade. O LuxCar não fornece CPF, placa ou identidade de proprietário. O titular pode solicitar remoção das memórias semântica, episódica e das solicitações associadas ao seu identificador.",
+  "sources": [
+    {
+      "source_id": "politicas-v2#s4",
+      "source_type": "corpus_excerpt",
+      "location": "dados/corpus/politicas-v2.json#s4",
+      "excerpt": "Privacidade. O LuxCar não fornece CPF, placa ou identidade de proprietário. O titular pode solicitar remoção das memórias semântica, episódica e das solicitações associadas ao seu identificador.",
+      "score": 2.7665,
+      "current": true
+    },
+    {
+      "source_id": "politicas-v2#s1",
+      "source_type": "corpus_excerpt",
+      "location": "dados/corpus/politicas-v2.json#s1",
+      "excerpt": "Fonte e atualidade. O LuxCar usa uma base simulada de especificações. Não consulta preço, estoque, placa, proprietário ou disponibilidade em tempo real. A fonte oficial da resposta é o registro identificado em dados/veiculos.json.",
+      "score": 1.9036,
+      "current": true
+    },
+    {
+      "source_id": "politicas-v2#s2",
+      "source_type": "corpus_excerpt",
+      "location": "dados/corpus/politicas-v2.json#s2",
+      "excerpt": "Variação por versão. Motor, câmbio, potência, torque e combustível podem variar por ano e versão. Quando a combinação não é única, o usuário deve informar marca, modelo, ano e versão antes de uma afirmação técnica.",
+      "score": 1.7211,
+      "current": true
+    }
+  ],
+  "sufficient": true,
+  "status": "answered",
+  "termination_reason": "completed",
+  "retrieval_calls": 1,
+  "tool_calls": [
+    "buscar_corpus_textual"
+  ],
+  "thread_id": "demo-corpus:evidencia:corpus-01",
+  "action": null
+}

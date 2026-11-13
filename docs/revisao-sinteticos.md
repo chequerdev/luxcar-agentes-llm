@@ -1,6 +1,6 @@
 # Revisão dos 23 casos sintéticos
 
-Confiram o gabarito abaixo contra o catálogo e as regras, não contra a resposta que o agente deu. Se concordarem com todos os casos, anotem os nomes de quem conferiu e a data. Se discordarem, anotem os IDs e o que esperam que aconteça.
+Gabriel Chequer de Oliveira e Anderson Clayton Ferreira Junior, do grupo LuxCar, confirmaram a revisão dos 23 gabaritos em 13/11/2026. A aprovação foi registrada para o grupo, sem atribuir casos individuais. Todos os casos de 08 a 30 foram aprovados sem alterações no dataset 2.0.0.
 
 | ID | Pedido | Resultado esperado |
 |---|---|---|

@@ -74,3 +74,10 @@ estimado foi US$ 0,003502725, com uso conhecido em 28/30 spans. Para o
 responsável, os dois traces de fallback identificam json_validate_failed.
 O SLI de término foi 35/35, com 0% do orçamento consumido, mesmo com duas
 falhas de integração. Os números das duas versões não foram agregados.
+
+## Evidência separada de recuperação documental
+
+A [consulta de política de privacidade](../evals/resultados/parte3-corpus-local-3.0.1/analise.md)
+executou a ferramenta buscar_corpus_textual na versão 3.0.1 local.
+O trace e a saída mostram o trecho vigente usado para responder.
+A execução não entra nas métricas da Groq nem altera a suíte de 30 casos.
