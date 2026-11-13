@@ -1,11 +1,68 @@
-# LuxCar — agente comercial para showrooms
+# LuxCar | Trabalho 3 — O sistema sob controle
+
+Entrega da disciplina de Agentes de IA do Senac, por Gabriel Chequer de
+Oliveira e Anderson Clayton Ferreira Junior. A Parte 3 usa o grafo da
+Parte 2 em `src.main`: consulta catálogo e documentos, e só registra
+interesse após revisão humana. O protótipo comercial de negociação está
+preservado mais abaixo e não é a entrada desta avaliação.
+
+## Reprodução no Windows (PowerShell)
+
+Use Python 3.12 e rode na raiz do repositório. Não é necessário ativar a
+venv nem configurar uma chave para reproduzir a suíte local.
+
+```powershell
+py -3.12 -m venv .venv
+.\.venv\Scripts\python.exe -m pip install -r requirements.txt
+$env:LUXCAR_USE_LLM = "0"
+.\.venv\Scripts\python.exe -m src.main "Qual câmbio o Polo TSI 2018 possui?"
+.\.venv\Scripts\python.exe -m pytest -q
+.\.venv\Scripts\python.exe -m evals.rodar --modo local --saida ".runtime/rodada-$(Get-Date -Format yyyyMMdd-HHmmss)"
+```
+
+No Linux/macOS, crie o ambiente com `python3.12 -m venv .venv`, ative
+com `source .venv/bin/activate`, use `python` nos comandos e exporte
+`LUXCAR_USE_LLM=0`. Para a suíte, indique um diretório de saída novo.
+
+Uma [execução local registrada](evals/resultados/parte3-nova/casos.jsonl)
+respondeu “Segundo o cadastro, o Volkswagen Polo TSI 2018 tem câmbio:
+Automático de 6 velocidades.” A fonte foi `veiculo:1`, com status
+`answered` e término `completed`.
+
+## Comparações e traces
+
+```bash
+python -m evals.comparar evals/resultados/parte3-anterior evals/resultados/parte3-nova
+python -m evals.comparar evals/resultados/parte3-groq-3.0.0 evals/resultados/parte3-groq-3.0.1
+python -m evals.metricas evals/resultados/parte3-groq-3.0.1/traces.jsonl
+```
+
+No Windows, use `.\.venv\Scripts\python.exe` no lugar de `python`
+se a venv não estiver ativada. Cada rodada grava `resumo.json`,
+`casos.jsonl` e `traces.jsonl` na pasta de saída. Para uma consulta
+avulsa com trace, defina `LUXCAR_TRACE_FILE=.runtime/trace.jsonl` no
+ambiente. A [demo de recuperação documental](evals/resultados/parte3-corpus-local-3.0.1/analise.md)
+traz exemplo, saída e trace.
+
+Resultados versionados: **26/30 → 30/30 no modo local**, **25/30 → 28/30
+na Groq** e **22/30 acordos com o juiz LLM**, que não foi adotado. Para
+repetir o modo remoto, copie `.env.example` para `.env`, configure
+`GROQ_API_KEY` e rode `python -m evals.rodar --modo llm --intervalo 15 --saida .runtime/rodada-remota`
+com uma pasta nova. Use apenas dados fictícios e não inclua a chave no Git.
+
+Veja [guia da entrega](docs/entrega-parte3.md),
+[avaliação](docs/evals.md), [model card](docs/model-card.md),
+[segurança](docs/seguranca.md), [observabilidade](docs/observabilidade.md),
+[mudanças](docs/mudancas.md) e [roteiro da apresentação](docs/apresentacao.md).
+
+## Referência da Parte 1 — protótipo comercial
 
 O fluxo comercial decide se uma proposta pode ser aberta para um veículo. Ele
 bloqueia unidade indisponível, negociação ativa ou valor abaixo do mínimo. Uma
 proposta só é gravada no SQLite depois da confirmação explícita do vendedor.
 O fluxo anterior de consulta técnica e RAG continua disponível abaixo.
 
-## Demonstrar negociação
+### Demonstrar negociação
 
 Modo local (sem chave), a partir da raiz do repositório:
 
@@ -38,7 +95,7 @@ disponíveis em `logs/negociacao/local/` não comprovam chamadas a modelo.
 Veja [caso](docs/case.md), [arquitetura](docs/arquitetura-v1.md),
 [comparação](docs/modelos.md) e [rastreabilidade da devolutiva](docs/correcoes-parte1.md).
 
-## Fluxo anterior — consulta e RAG
+## Referência histórica da Parte 2 — consulta e RAG
 
 O LuxCar recebe uma pergunta em texto livre, identifica a intenção com LLM, consulta registros ou documentos e devolve um objeto Pydantic com resultado, fontes e suficiência. Uma solicitação de interesse só é gravada depois de revisão humana.
 
@@ -125,7 +182,7 @@ src/prompts/           prompts carregados em execução
 dados/corpus/          documentos vigentes e revogado
 docs/                  decisões e evidências de projeto
 logs/parte2-*.json     execuções reais da Parte 2
-tests/                 13 testes automatizados
+tests/                 testes automatizados
 ```
 
 ## Limites honestos
@@ -137,24 +194,3 @@ tests/                 13 testes automatizados
 - logs podem conter argumentos de demonstração e devem ser tratados conforme a política de retenção.
 
 Detalhes: `docs/io.md`, `docs/prompts.md`, `docs/arquitetura.md`, `docs/rag.md`, `docs/memoria.md`, `docs/grafo.md` e `docs/humano.md`.
-
-## Parte 3 — avaliar e observar o grafo da Parte 2
-
-A suíte da Parte 3 chama o mesmo fluxo de python -m src.main, não o
-protótipo comercial separado. Instale requirements.txt em Python 3.12.
-Use dados fictícios. Sem chave, as evidências declaram o modo local.
-
-    python -m evals.rodar --modo local --saida .runtime/rodada
-    python -m evals.comparar evals/resultados/parte3-anterior evals/resultados/parte3-nova
-    python -m pytest -q
-    python -m evals.metricas .runtime/rodada/traces.jsonl
-
-O JSONL de spans fica na pasta da rodada. Para execução isolada, configure
-LUXCAR_TRACE_FILE=.runtime/trace.jsonl no ambiente ou no .env e rode:
-
-    python -m src.main "Qual câmbio o Polo TSI 2018 possui?"
-
-Saída da rodada: “Segundo o cadastro, o Volkswagen Polo TSI 2018 tem
-câmbio: Automático de 6 velocidades.” Status answered, término completed,
-fonte veiculo:1. Veja [avaliação](docs/evals.md), [governança](docs/model-card.md),
-[segurança](docs/seguranca.md) e [observabilidade](docs/observabilidade.md).

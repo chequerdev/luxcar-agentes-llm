@@ -27,7 +27,15 @@ def main():
                       (args.anterior / "casos.jsonl").read_text(encoding="utf-8").splitlines())
     composition = " · ".join(f"{k} {origens[k]}" for k in ("producao", "desenvolvimento", "sintetico"))
     print(f"DATASET v{a['dataset']}   {a['total']} casos   ({composition})")
-    print("JUIZ não validado" if b["juiz"] is None else b["juiz"])
+    judge_path = Path(__file__).resolve().parent / "resultados/juiz-v1.0.0/resultado-bruto.json"
+    if b["juiz"] is None and judge_path.is_file():
+        judge = json.loads(judge_path.read_text(encoding="utf-8"))
+        print(f"JUIZ rubrica v{judge['rubrica']}  concordância {judge['concordancia']:.1%}"
+              f"  limiar {judge['limiar']:.0%}  (validação separada, não adotado)")
+    elif b["juiz"] is not None:
+        print(b["juiz"])
+    else:
+        print("JUIZ sem resultado publicado")
     print(f"{'classe':20s} {'versão A':>9s} {'versão B':>9s} {'delta':>9s}")
     for label, left, right in [(c, a["classes"][c], b["classes"][c]) for c in a["classes"]] + [("MÉDIA", a, b)]:
         x, y = pct(left), pct(right)
