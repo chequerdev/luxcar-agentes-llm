@@ -1,65 +1,17 @@
+# LuxCar | Base de conhecimento v1
 
----
+## Fontes e responsabilidade
 
-# 3. `docs/base-de-conhecimento-v1.md`
+| Fonte versionada | Uso | Origem e limite |
+|---|---|---|
+| `dados/veiculos.json` | ID, marca, modelo, ano, versão e ficha de referência | Catálogo acadêmico simulado; não equivale a ficha homologada |
+| `dados/estoque-demo.json` | Disponibilidade e mínimo comercial em centavos | Preços e situação fictícios atribuídos ao mesmo ID do catálogo |
+| SQLite `revisoes` | Proposta em revisão, vendedor e validade | Estado operacional local; não representa uma reserva |
+| SQLite `propostas` | Proposta ativa e valor confirmado | Estado operacional local, fonte decisiva para conflito |
+| `dados/corpus/politicas-v2.json` | Busca documental do fluxo histórico | Corpus simulado. A versão revogada permanece apenas para teste histórico |
 
-Aqui eu **corrigi aquela parada da FIPE API**, porque descobrimos que a própria FIPE informa que não disponibiliza API oficial. E também deixei muito claro o que é **V1 atual** e o que é **planejamento futuro**.
+## Qualidade e vigência
 
-```markdown
-# LuxCar — Base de Conhecimento v1
+O ID positivo e único identifica uma unidade, não apenas um modelo. O estoque e o catálogo devem ter o mesmo conjunto de IDs. Status aceitos: disponível, vendido e bloqueado. O valor mínimo deve ser positivo. A camada de acesso valida o formato e os campos obrigatórios antes de tomar a decisão. Arquivo ausente, JSON inválido, dados incompletos e erro SQLite produzem uma falha explícita no fluxo comercial. A validação é repetida na confirmação.
 
-## 1. Objetivo
-
-A base de conhecimento do LuxCar tem como objetivo definir quais informações o agente poderá consultar, onde essas informações estão armazenadas e qual estratégia será utilizada para recuperar cada tipo de dado.
-
-O objetivo principal é evitar que o modelo de linguagem precise depender exclusivamente de seu conhecimento interno para responder perguntas específicas sobre veículos.
-
-Por exemplo, diante da pergunta:
-
-> "Qual câmbio o Polo TSI 2018 possui?"
-
-o agente deve consultar uma fonte do projeto antes de responder, em vez de simplesmente confiar na memória do modelo.
-
----
-
-## 2. Tipos de conhecimento
-
-O LuxCar trabalha com três categorias principais de informação.
-
-### 2.1 Conhecimento geral
-
-São informações gerais sobre automóveis que fazem parte do conhecimento do modelo de linguagem, como conceitos básicos de:
-
-- motores;
-- transmissões;
-- tração;
-- combustível;
-- manutenção;
-- componentes automotivos.
-
-Esse conhecimento não precisa ser armazenado novamente na base do LuxCar.
-
-### 2.2 Dados estruturados
-
-São informações que possuem campos bem definidos e que podem ser consultadas diretamente.
-
-Exemplos:
-
-- marca;
-- modelo;
-- ano;
-- versão;
-- motor;
-- potência;
-- torque;
-- combustível;
-- transmissão;
-- equipamentos;
-- preço cadastrado;
-- quilometragem;
-- identificadores.
-
-Na primeira versão, esses dados estão em:
-
-```text
-dados/veiculos.json
+Os arquivos de demonstração devem ser alterados juntos, fora de uma execução ativa. Em produção, estoque, regras de preço e negociação precisariam de uma fonte transacional comum. Placa, CPF, telefone e dados do cliente não fazem parte da base comercial. Para auditar uma alteração de regra, atualize o caso correspondente em `evals/negociacao-casos.json` e rode o verificador novamente.

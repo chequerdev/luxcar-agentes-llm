@@ -1,0 +1,54 @@
+{
+  "modo": "local",
+  "modelo": null,
+  "aprovados": 5,
+  "total": 5,
+  "latencia_mediana_ms": 0,
+  "casos": [
+    {
+      "id": "01-simples",
+      "esperado": "aguardando_confirmacao",
+      "obtido": "aguardando_confirmacao",
+      "antes": 0,
+      "apos": 1,
+      "apos_decisao": "gravada",
+      "passou": true
+    },
+    {
+      "id": "02-divergencia",
+      "esperado": "divergencia",
+      "obtido": "divergencia",
+      "antes": 0,
+      "apos": 0,
+      "apos_decisao": null,
+      "passou": true
+    },
+    {
+      "id": "03-inexistente",
+      "esperado": "veiculo_inexistente",
+      "obtido": "veiculo_inexistente",
+      "antes": 0,
+      "apos": 0,
+      "apos_decisao": null,
+      "passou": true
+    },
+    {
+      "id": "04-sem-escrita",
+      "esperado": "elegivel",
+      "obtido": "elegivel",
+      "antes": 0,
+      "apos": 0,
+      "apos_decisao": null,
+      "passou": true
+    },
+    {
+      "id": "05-abaixo-do-minimo",
+      "esperado": "abaixo_do_minimo",
+      "obtido": "abaixo_do_minimo",
+      "antes": 0,
+      "apos": 0,
+      "apos_decisao": null,
+      "passou": true
+    }
+  ]
+}

@@ -1,8 +1,47 @@
-# LuxCar — agente de consulta automotiva
+# LuxCar — agente comercial para showrooms
+
+O fluxo comercial decide se uma proposta pode ser aberta para um veículo. Ele
+bloqueia unidade indisponível, negociação ativa ou valor abaixo do mínimo. Uma
+proposta só é gravada no SQLite depois da confirmação explícita do vendedor.
+O fluxo anterior de consulta técnica e RAG continua disponível abaixo.
+
+## Demonstrar negociação
+
+Modo local (sem chave), a partir da raiz do repositório:
+
+```bash
+python -m src.negociacao --modo local --vendedor demo --mensagem 'Abra uma proposta para o Polo por R$ 70.000,00'
+python -m src.negociacao --vendedor demo --confirmar ID_DA_REVISAO
+python -m src.negociacao --modo local --vendedor outro --mensagem 'O Polo está disponível?'
+```
+
+Substitua `ID_DA_REVISAO` pelo valor da primeira saída. No segundo comando use
+`--rejeitar` no lugar de `--confirmar` para testar a recusa. Para repetir desde
+o zero sem alterar a primeira demonstração, use `--db` com um novo arquivo
+SQLite em todos os comandos.
+
+No modo LLM instale `requirements.txt`, copie `.env.example` para `.env` e
+configure `LLM_API_KEY` (ou `GROQ_API_KEY`). Para Groq, o padrão é
+`LLM_BASE_URL=https://api.groq.com/openai/v1` e
+`LLM_MODELO=openai/gpt-oss-20b`. Troque `--modo local` por `--modo llm` na
+mensagem. Não coloque a chave no Git.
+
+```bash
+python -m pytest -q
+python -m scripts.avaliar_negociacao --saida .runtime/eval-negociacao
+python -m scripts.avaliar_negociacao --modo comparar --saida .runtime/comparacao
+```
+
+O último comando exige chave e executa 15 chamadas. Os logs do modo local
+disponíveis em `logs/negociacao/local/` não comprovam chamadas a modelo.
+Veja [caso](docs/case.md), [arquitetura](docs/arquitetura-v1.md),
+[comparação](docs/modelos.md) e [rastreabilidade da devolutiva](docs/correcoes-parte1.md).
+
+## Fluxo anterior — consulta e RAG
 
 O LuxCar recebe uma pergunta em texto livre, identifica a intenção com LLM, consulta registros ou documentos e devolve um objeto Pydantic com resultado, fontes e suficiência. Uma solicitação de interesse só é gravada depois de revisão humana.
 
-## Rodar em menos de cinco minutos
+### Rodar em menos de cinco minutos
 
 Recomendado: Python 3.12 ou 3.13. A suíte também passa no Python 3.14, com um aviso de compatibilidade emitido pelo `langchain-core`.
 

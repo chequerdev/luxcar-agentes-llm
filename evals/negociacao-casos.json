@@ -1,0 +1,7 @@
+[
+  {"id":"01-simples","mensagem":"Abra uma proposta para o Polo por R$ 70.000,00","motivo":"aguardando_confirmacao","confirmar":true,"depois":"gravada","linhas":1},
+  {"id":"02-divergencia","mensagem":"Abra uma proposta para o Audi A3, ID 1, por R$ 110.000,00","motivo":"divergencia","linhas":0},
+  {"id":"03-inexistente","mensagem":"Abra uma proposta para o veículo 999 por R$ 120.000,00","motivo":"veiculo_inexistente","linhas":0},
+  {"id":"04-sem-escrita","mensagem":"O Polo está disponível?","motivo":"elegivel","linhas":0},
+  {"id":"05-abaixo-do-minimo","mensagem":"Registre uma proposta para o Polo por R$ 60.000,00","motivo":"abaixo_do_minimo","linhas":0}
+]

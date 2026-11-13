@@ -1,0 +1,7 @@
+[
+  {"id": 1, "status": "disponivel", "minimo_centavos": 6500000},
+  {"id": 2, "status": "disponivel", "minimo_centavos": 9000000},
+  {"id": 3, "status": "disponivel", "minimo_centavos": 7900000},
+  {"id": 4, "status": "disponivel", "minimo_centavos": 10500000},
+  {"id": 5, "status": "vendido", "minimo_centavos": 11500000}
+]
