@@ -63,3 +63,28 @@ def test_measure_preserves_progress_and_resumes(tmp_path, monkeypatch):
     assert report["matriz"] == {"humano_0_juiz_0": 1, "humano_0_juiz_1": 0,
                                "humano_1_juiz_0": 0, "humano_1_juiz_1": 19}
     assert not out.with_name(out.name + ".parcial").exists()
+
+
+@pytest.mark.parametrize("code", ["json_validate_failed", "invalid_model"])
+def test_only_invalid_json_is_retried_on_400(code):
+    calls, delays = [], []
+
+    def create(**kwargs):
+        calls.append(kwargs)
+        if len(calls) == 1:
+            raise openai.BadRequestError(
+                "Bad request", response=httpx.Response(400, request=httpx.Request("POST", "https://example.invalid")),
+                body={"code": code},
+            )
+        return "accepted"
+
+    client = SimpleNamespace(chat=SimpleNamespace(completions=SimpleNamespace(create=create)))
+    row = {"id": "19", "entrada": "x", "saida": "y"}
+    if code == "json_validate_failed":
+        assert judge.request_verdict(client, "model", "rubric", row, sleep=delays.append) == "accepted"
+        assert delays == [2]
+        assert calls[0] == calls[1]
+    else:
+        with pytest.raises(openai.BadRequestError):
+            judge.request_verdict(client, "model", "rubric", row, sleep=delays.append)
+        assert len(calls) == 1 and not delays

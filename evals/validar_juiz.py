@@ -30,17 +30,32 @@ def prepare(round_dir, labels):
 
 
 def request_verdict(client, model, rubric, row, *, sleep=time.sleep):
-    from openai import RateLimitError
+    from openai import BadRequestError, RateLimitError
 
-    for attempt in range(7):
+    json_failures = 0
+    rate_failures = 0
+    while True:
         try:
             return client.chat.completions.create(
                 model=model, temperature=0, max_completion_tokens=512, response_format={"type": "json_object"},
                 messages=[{"role": "system", "content": rubric},
                           {"role": "user", "content": json.dumps(
                               {k: row[k] for k in ("entrada", "saida")}, ensure_ascii=False)}])
+        except BadRequestError as err:
+            if err.code != "json_validate_failed":
+                raise
+            json_failures += 1
+            if json_failures >= 4:
+                raise ValueError(
+                    f"A API não conseguiu gerar JSON válido no caso {row['id']} após quatro tentativas. "
+                    "O progresso foi preservado. Rode o mesmo comando para retomar."
+                ) from None
+            delay = 2 * json_failures
+            print(f"JSON rejeitado pela API no caso {row['id']}. Tentando de novo em {delay}s.", flush=True)
+            sleep(delay)
         except RateLimitError as err:
-            if attempt == 6:
+            rate_failures += 1
+            if rate_failures >= 7:
                 raise ValueError("A Groq ainda está limitando chamadas. Rode o mesmo comando depois para retomar.") from None
             raw = err.response.headers.get("retry-after")
             match = re.search(r"try again in (?:([0-9.]+)m)?\s*([0-9.]+)s", str(err), re.I)
@@ -52,7 +67,7 @@ def request_verdict(client, model, rubric, row, *, sleep=time.sleep):
                 delay = (60 * float(match[1] or 0) + float(match[2])) if match else 0
             if delay > 90:
                 raise ValueError("A API pediu uma espera maior que 90 segundos. Rode o mesmo comando mais tarde.") from None
-            delay = max(delay + 1, min(60, 5 * 2 ** attempt))
+            delay = max(delay + 1, min(60, 5 * 2 ** (rate_failures - 1)))
             print(f"Limite da API no caso {row['id']}. Aguardando {delay:.1f}s para tentar de novo.", flush=True)
             sleep(delay)
 
