@@ -1,0 +1,32 @@
+{
+  "dataset": "2.0.0",
+  "dataset_sha256": "ad00bc3c2950477f79e32a216a04c2951b7ba1cca5a33d06189db096d7f092f2",
+  "sistema_sha256": "88059812feb35a82439a0b1f8d0da018bf08a061590dd39920966e97950493d4",
+  "modo": "llm",
+  "executado_em": "2026-11-13T23:36:10.881616+00:00",
+  "juiz": null,
+  "aprovados": 28,
+  "total": 30,
+  "classes": {
+    "acao": {
+      "aprovados": 5,
+      "total": 5
+    },
+    "divergencia": {
+      "aprovados": 2,
+      "total": 2
+    },
+    "ficha": {
+      "aprovados": 11,
+      "total": 11
+    },
+    "incompleta": {
+      "aprovados": 4,
+      "total": 4
+    },
+    "recusa": {
+      "aprovados": 6,
+      "total": 8
+    }
+  }
+}

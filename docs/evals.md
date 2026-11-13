@@ -23,10 +23,14 @@ sem unidade e pergunta de câmbio sem identificação. Não são números de LLM
 
 ## Rodada com a Groq
 
-A versão 3.0.0 passou em **25/30** com a Groq, com dois erros de triagem e
-três quedas para o modo local. A [evidência remota](../evals/resultados/parte3-groq-3.0.0/analise.md)
-separa os casos e os custos mensuráveis. A versão 3.0.1 corrigiu os dois
-erros de triagem no código, com testes, e aguarda nova rodada remota.
+No mesmo conjunto e provedor, a [versão 3.0.0](../evals/resultados/parte3-groq-3.0.0/analise.md)
+passou em **25/30** e a [versão 3.0.1](../evals/resultados/parte3-groq-3.0.1/analise.md)
+em **28/30**, ganho de 10 pontos percentuais. Os casos 17 e 26 passaram
+após os controles de triagem. O caso 20 também passou. As duas falhas
+restantes foram rejeições do JSON da triagem remota, com fallback local
+funcional que não contou como aprovação remota.
+
+    python -m evals.comparar evals/resultados/parte3-groq-3.0.0 evals/resultados/parte3-groq-3.0.1
 
 ## Juiz
 

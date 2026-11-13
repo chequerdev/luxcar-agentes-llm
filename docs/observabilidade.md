@@ -62,3 +62,15 @@ US$ 0,003426, sem estimar os três faltantes. Para o responsável, é possível
 localizar a busca sem ano e a busca com marca incorreta no trace. A rodada
 não exerceu a ferramenta do corpus. O SLO de término foi atingido neste
 recorte, mas sozinho não demonstra qualidade remota.
+
+
+## Recorte remoto da versão 3.0.1
+
+A [rodada 3.0.1](../evals/resultados/parte3-groq-3.0.1/analise.md) tem
+35 execuções, p50 de 1.036,327 ms e p95 de 2.095,094 ms. O negócio teve
+28/30 casos aprovados. Para operação, 2/30 chamadas de modelo falharam,
+sem erros nas ferramentas acionadas. Para quem paga, o custo parcial
+estimado foi US$ 0,003502725, com uso conhecido em 28/30 spans. Para o
+responsável, os dois traces de fallback identificam json_validate_failed.
+O SLI de término foi 35/35, com 0% do orçamento consumido, mesmo com duas
+falhas de integração. Os números das duas versões não foram agregados.

@@ -6,7 +6,7 @@
 4. **Ferramentas e integrações.** Catálogo, corpus textual, SQLite e SDK OpenAI.
 5. **Modelo e provedor.** Configuráveis em src/config.py. Modo local não chama modelo.
 6. **Dados.** Catálogo, políticas e contatos simulados. Não apto a dados reais.
-7. **Avaliação.** 26/30 e 30/30 em duas [rodadas](evals.md). Juiz com 22/30 acordos (73,3%) e não adotado, abaixo de 90%. [Matriz e desacordos](../evals/resultados/juiz-v1.0.0/analise.md). **LACUNA:** revisão dos casos sintéticos e revalidação remota da versão 3.0.1. A [rodada remota 3.0.0](../evals/resultados/parte3-groq-3.0.0/analise.md) passou em 25/30.
+7. **Avaliação.** 26/30 e 30/30 em duas [rodadas](evals.md). Juiz com 22/30 acordos (73,3%) e não adotado, abaixo de 90%. [Matriz e desacordos](../evals/resultados/juiz-v1.0.0/analise.md). A [comparação remota](../evals/resultados/parte3-groq-3.0.1/analise.md) passou de 25/30 em 3.0.0 para 28/30 em 3.0.1. **LACUNA:** revisão dos casos sintéticos e evidência de execução da recuperação documental na rodada remota.
 8. **Limites conhecidos.** Sem estoque real, venda, pagamento ou autenticação.
 9. **Riscos aceitos.** Identidade declarada do operador em bancada. [Decisão e gatilho](seguranca.md).
 10. **Supervisão humana.** Interrupt antes de escrita, prazo e edição restrita.
@@ -38,5 +38,5 @@ a identidade civil do revisor.
 ## Lacunas e correções propostas
 
 - Revisar os casos sintéticos. Para nova tentativa de adoção do juiz, esclarecer a rubrica e validar com nova amostra.
-- Revalidar a versão 3.0.1 com o provedor e medir consumo/custo das chamadas com uso registrado.
+- Cobrir a recuperação documental em rodada específica e tratar rejeições do JSON na triagem. O custo dos spans sem uso informado permanece desconhecido.
 - Antes de produção, autenticar operadores, validar credencial e teto, automatizar expurgo e acesso.
