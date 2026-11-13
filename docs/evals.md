@@ -21,6 +21,13 @@ percentuais no mesmo conjunto e modo local. Mudaram quatro resultados:
 registro de interesse para veículo inexistente, dois valores de potência
 sem unidade e pergunta de câmbio sem identificação. Não são números de LLM.
 
+## Rodada com a Groq
+
+A versão 3.0.0 passou em **25/30** com a Groq, com dois erros de triagem e
+três quedas para o modo local. A [evidência remota](../evals/resultados/parte3-groq-3.0.0/analise.md)
+separa os casos e os custos mensuráveis. A versão 3.0.1 corrigiu os dois
+erros de triagem no código, com testes, e aguarda nova rodada remota.
+
 ## Juiz
 
 A [rubrica](../evals/juiz/rubrica-v1.0.0.md) fixou o limiar de 90%

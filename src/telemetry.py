@@ -68,7 +68,7 @@ def agent_span(operation):
                 text = "Retomada de revisão"
             with tracer.start_as_current_span("invoke_agent luxcar", record_exception=False, attributes={
                 "gen_ai.operation.name": "invoke_agent", "gen_ai.agent.name": "luxcar",
-                "luxcar.versao": "3.0.0", "luxcar.fase": operation, "luxcar.entrada": safe(text),
+                "luxcar.versao": "3.0.1", "luxcar.fase": operation, "luxcar.entrada": safe(text),
             }) as span:
                 from .config import MODEL, PROVIDER
                 from .prompt_loader import prompt_versions

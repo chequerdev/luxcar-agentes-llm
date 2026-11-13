@@ -38,3 +38,25 @@ def test_memory_entry_accepts_only_structured_reference(tmp_path):
     with pytest.raises(ValueError):
         store.remember_vehicle_lookup("controle", 1, "texto livre não verificado")
     assert not store.similar_episodes("controle", "veiculo")
+
+
+def test_model_vehicle_lookup_with_two_years_asks_which_year(monkeypatch):
+    from src.contracts import TriageDecision
+    decision = TriageDecision(route="vehicle_query", modelo="Polo", attribute="cambio",
+                              reason="test", confidence=0.9)
+    monkeypatch.setattr("src.graph._llm_triage", lambda text: (decision, {"mode": "mock"}))
+    result = run_agent("Qual câmbio do Polo TSI 2018 ou 2019?",
+                       user_id="controle", session_id=uuid4().hex)
+    assert result.status == "clarification_needed"
+    assert not result.tool_calls
+
+
+def test_model_repeated_name_as_brand_uses_catalog(monkeypatch):
+    from src.contracts import TriageDecision
+    decision = TriageDecision(route="vehicle_query", marca="Civic", modelo="Civic",
+                              ano=2020, attribute="potencia_cv", reason="test", confidence=0.9)
+    monkeypatch.setattr("src.graph._llm_triage", lambda text: (decision, {"mode": "mock"}))
+    result = run_agent("Qual potência do Civic Touring 2020?",
+                       user_id="controle", session_id=uuid4().hex)
+    assert result.status == "answered"
+    assert "173 cv" in result.result

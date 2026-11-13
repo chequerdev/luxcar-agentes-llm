@@ -104,7 +104,12 @@ def _llm_triage(text: str) -> tuple[TriageDecision, dict[str, Any]]:
             decision = TriageDecision.model_validate_json(response.choices[0].message.content or "{}")
         return decision, {"mode": "llm", "provider": PROVIDER, "model": MODEL, "prompt_version": TRIAGE_VERSION}
     except Exception as error:
-        return _fallback_triage(text), {"mode": "deterministic_fallback", "reason": f"{type(error).__name__}: {error}"}
+        kind = type(error).__name__
+        trace.get_current_span().set_attribute("luxcar.fallback_erro_tipo", kind)
+        code = getattr(error, "code", None)
+        if isinstance(code, str) and re.fullmatch(r"[a-zA-Z0-9_-]{1,80}", code):
+            trace.get_current_span().set_attribute("luxcar.fallback_erro_codigo", code)
+        return _fallback_triage(text), {"mode": "deterministic_fallback", "reason": kind}
 
 
 def initialize(state: LuxCarState) -> dict[str, Any]:
@@ -128,6 +133,17 @@ def triage(state: LuxCarState) -> dict[str, Any]:
     if decision.route == "register_interest" and "interesse" not in normal_text:
         decision.route = "vehicle_query"
         decision.reason += "; rota de escrita bloqueada pelo guardrail"
+    if decision.route == "vehicle_query":
+        explicit_years = set(re.findall(r"\b(?:19|20)\d{2}\b", normal_text))
+        if len(explicit_years) > 1:
+            decision.route = "clarify"
+            decision.missing = ["um único ano"]
+        elif decision.modelo and decision.marca and normalize(decision.modelo) == normalize(decision.marca):
+            # Confere marca só quando ela repete o modelo e o cadastro é inequívoco.
+            known = find_vehicles(None, decision.modelo, None)
+            brands = {item["marca"] for item in known}
+            if len(brands) == 1:
+                decision.marca = next(iter(brands))
     unsupported = ("consumo", "preco", "quilometragem", "seguro", "autonomia")
     if decision.route == "vehicle_query" and any(term in normal_text for term in unsupported):
         decision.attribute = "geral"

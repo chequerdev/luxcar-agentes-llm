@@ -34,8 +34,8 @@ spans e não foi misturada.
   com entrada insuficiente, duas fora de escopo e uma rejeitada.
 - Operação: p50 de 5,666 ms e p95 de 9,090 ms. Erros de ferramenta: 0/19
   busca, 0/5 validação para revisão e 0/2 escrita.
-- Quem paga: US$ 0,00 de API por execução local. **LACUNA:** custo remoto
-  não medido, pois não houve chamadas remotas na rodada.
+- Quem paga: US$ 0,00 de API por execução local. A rodada Groq separada
+  mediu US$ 0,003426 nos 27 spans com tokens. O custo total é desconhecido.
 - Responsável: o [model card](model-card.md) reconstrói uma aprovação. A
   identidade no CLI é declarada, não autenticada.
 
@@ -49,3 +49,16 @@ contam como bons. O indicador mede desfecho, não substitui precisão.
 SLO de bancada: ≥95% em sete dias. Janela observada: 35/35 (100%), consumo
 de 0 de 1,75 falhas de orçamento teórico (0%). Se violar, isolar os motivos
 e reexecutar a suíte após ajustar recuperação ou orçamento.
+
+
+## Recorte remoto da versão 3.0.0
+
+A [rodada Groq](../evals/resultados/parte3-groq-3.0.0/analise.md) tem
+35 execuções, p50 de 1.130,051 ms e p95 de 1.896,122 ms. O negócio teve
+25/30 casos aprovados, apesar de 35/35 términos previstos. Para operação,
+3/30 chamadas remotas terminaram em erro, enquanto as ferramentas chamadas
+não emitiram erro. Para quem paga, os 27 spans com tokens permitiram estimar
+US$ 0,003426, sem estimar os três faltantes. Para o responsável, é possível
+localizar a busca sem ano e a busca com marca incorreta no trace. A rodada
+não exerceu a ferramenta do corpus. O SLO de término foi atingido neste
+recorte, mas sozinho não demonstra qualidade remota.
