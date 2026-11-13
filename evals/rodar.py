@@ -28,7 +28,7 @@ def actions(memory, user):
             "SELECT payload FROM actions WHERE user_id=?", (user,))]
 
 
-def run(directory, mode):
+def run(directory, mode, pause_seconds=0):
     data = json.loads(DATASET.read_text(encoding="utf-8"))
     directory.mkdir(parents=True, exist_ok=False)
     results = []
@@ -41,7 +41,9 @@ def run(directory, mode):
         from src.main import run_agent, resume_agent
         if mode == "llm" and not API_KEY:
             raise ValueError("Modo llm exige chave de um provedor configurado no README.")
-        for case in data["casos"]:
+        for index, case in enumerate(data["casos"], start=1):
+            if mode == "llm" and index > 1 and pause_seconds:
+                time.sleep(pause_seconds)
             expected = case["esperado"]
             user = "suite-" + case["id"]
             measured = {"id": case["id"], "classe": case["classe"], "origem": case["origem"]}
@@ -80,6 +82,7 @@ def run(directory, mode):
                 measured.update({"aprovado": False, "erro": type(err).__name__})
             measured["latencia_ms"] = round((time.perf_counter_ns() - start) / 1e6, 3)
             results.append(measured)
+            print(f"{index}/{len(data['casos'])} — {case['id']}: " + ("passou" if measured["aprovado"] else "falhou"), flush=True)
     classes = defaultdict(list)
     for result in results:
         classes[result["classe"]].append(result["aprovado"])
@@ -96,9 +99,12 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--saida", type=Path, required=True)
     parser.add_argument("--modo", choices=("local", "llm"), default="local")
+    parser.add_argument("--intervalo", type=float, default=15, help="Pausa entre casos no modo llm, em segundos")
     args = parser.parse_args()
+    if not 0 <= args.intervalo <= 120:
+        parser.error("--intervalo deve ficar entre 0 e 120 segundos.")
     try:
-        report = run(args.saida, args.modo)
+        report = run(args.saida, args.modo, args.intervalo)
     except (ValueError, FileExistsError) as exc:
         parser.error(str(exc))
     print(f"{report['aprovados']}/{report['total']} | {args.saida}")
