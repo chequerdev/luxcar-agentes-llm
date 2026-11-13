@@ -103,3 +103,41 @@ def test_revalidates_inventory_after_confirmation(agent, tmp_path):
 def test_ambiguous_input_is_blocked(agent, request_text):
     assert agent.execute("ana", text=request_text)["motivo"] == "divergencia"
     assert agent.store.count() == 0
+
+
+def test_openai_sdk_end_to_end(agent):
+    """O SDK serializa ferramentas e consumo. Transporte simulado, não chamada à Groq."""
+    import httpx
+    from openai import OpenAI
+
+    calls = []
+
+    def transport(request):
+        assert request.url.path == "/openai/v1/chat/completions"
+        body = json.loads(request.content)
+        calls.append(body)
+        assert body["tool_choice"] == "required"
+        assert len(body["tools"]) == 3
+        return httpx.Response(200, json={
+            "id": "sdk-mock", "object": "chat.completion", "created": 0,
+            "model": "openai/gpt-oss-20b",
+            "choices": [{"index": 0, "finish_reason": "tool_calls", "message": {
+                "role": "assistant", "content": None, "tool_calls": [{"id": "tool-1", "type": "function",
+                    "function": {"name": "registrar_proposta",
+                                 "arguments": '{"veiculo_id":1,"valor_centavos":7000000}'}}]}}],
+            "usage": {"prompt_tokens": 900, "completion_tokens": 45, "total_tokens": 945},
+        })
+
+    http = httpx.Client(transport=httpx.MockTransport(transport))
+    with OpenAI(api_key="test-only", base_url="https://mock.invalid/openai/v1", http_client=http) as client:
+        llm = Agent(agent.store, agent.logfile, mode="llm", client=client)
+        initial = llm.execute("ana", text=POLO)
+        assert initial["motivo"] == "aguardando_confirmacao"
+        assert agent.store.count() == 0
+        final = llm.execute("ana", review=initial["revisao_id"], approval=True)
+        assert final["motivo"] == "gravada"
+        assert agent.store.count() == len(calls) == 1
+    first, second = (json.loads(line) for line in agent.logfile.read_text(encoding="utf-8").splitlines())
+    assert first["tokens"] == {"entrada": 900, "saida": 45}
+    assert second["modo"] == "confirmacao_humana"
+    assert second["tokens"] == {"entrada": 0, "saida": 0}

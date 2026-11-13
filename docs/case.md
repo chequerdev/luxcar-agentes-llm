@@ -12,7 +12,7 @@
 
 ### Linha de base manual
 
-Para cada cenário de `evals/negociacao-casos.json`, use uma cópia nova do catálogo e do estoque com a lista de propostas vazia. Sem usar o agente, abra o cenário, localize o ID, confira status, proposta ativa e mínimo conforme aplicável e escreva a decisão. Cronometre da leitura do pedido até a decisão escrita. Não inclua o tempo de espera pela confirmação, que é humano em ambas as alternativas. Registre cenário, participante, segundos e decisão, e calcule a mediana dos tempos e o número de decisões certas. **Medição com participantes ainda pendente.**
+Para cada cenário de `evals/negociacao-casos.json`, use uma cópia nova do catálogo e do estoque com a lista de propostas vazia. Sem usar o agente, abra o cenário, localize o ID, confira status, proposta ativa e mínimo conforme aplicável e escreva a decisão. Cronometre da leitura do pedido até a decisão escrita. Não inclua o tempo de espera pela confirmação, que é humano em ambas as alternativas. Registre cenário, participante, segundos e decisão, e calcule a mediana dos tempos e o número de decisões certas. Use `python -m scripts.medir_fluxo_manual --operador vendedor_demo --saida .runtime/manual-vendedor-demo.json` para cronometrar e salvar decisões e tempos por cenário. **Medição com participantes ainda pendente.**
 
 ## 2. Usuários e conversa
 

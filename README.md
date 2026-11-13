@@ -30,9 +30,10 @@ mensagem. Não coloque a chave no Git.
 python -m pytest -q
 python -m scripts.avaliar_negociacao --saida .runtime/eval-negociacao
 python -m scripts.avaliar_negociacao --modo comparar --saida .runtime/comparacao
+python -m scripts.medir_fluxo_manual --operador vendedor_demo
 ```
 
-O último comando exige chave e executa 15 chamadas. Os logs do modo local
+A comparação de modelos exige chave e executa 15 chamadas. Os logs do modo local
 disponíveis em `logs/negociacao/local/` não comprovam chamadas a modelo.
 Veja [caso](docs/case.md), [arquitetura](docs/arquitetura-v1.md),
 [comparação](docs/modelos.md) e [rastreabilidade da devolutiva](docs/correcoes-parte1.md).
